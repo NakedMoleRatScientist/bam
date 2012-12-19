@@ -1,0 +1,15 @@
+
+menu = (p5) ->
+
+
+  p5.setup = () ->
+    p5.size(800, 600)
+    p5.background(0)
+    @fps = 50
+
+  p5.draw = () ->
+
+$(document).ready ->
+  canvas = document.getElementById "processing"
+  canvas.focus()
+  processing = new Processing(canvas, menu)
