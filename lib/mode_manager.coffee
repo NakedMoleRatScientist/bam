@@ -1,4 +1,4 @@
 class ModeManager
-  constructor: () ->
+  constructor: (@p5) ->
     @mode = "menu"
     this.initialize()
