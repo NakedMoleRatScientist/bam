@@ -8,6 +8,7 @@ menu = (p5) ->
     @fps = 50
 
   p5.draw = () ->
+    frameRateDraw(p5)
 
 $(document).ready ->
   canvas = document.getElementById "processing"
