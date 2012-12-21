@@ -11,3 +11,4 @@ class MenuMode
   process: (result) ->
     if result == "down"
       @options.increase()
+      @queue.push "down"
