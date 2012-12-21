@@ -4,12 +4,6 @@ class Map
   setup: () ->
     @map = []
     this.size_map()
-    @stockpoints = []
-    @crystals = []
-    @timbers = []
-    @logs = []
-    @crystalTrees = []
-    @trees = []
     @collision = new Collision(this)
     @sketch = new MapSketch(this)
     @generate = new GenerateMap(this)
