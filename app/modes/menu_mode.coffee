@@ -4,3 +4,7 @@ class MenuMode
     @options.add_text(["New Game", "Test Arena"])
     @queue = []
     @queue.push "update"
+  get_queue: () ->
+    if @queue.size != 0
+      return @queue.last
+    return false
