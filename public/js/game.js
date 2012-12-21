@@ -1,5 +1,5 @@
 (function() {
-  var MenuDrawMode, MenuKeyMode, MenuMode, TextOptions, TextOptionsDraw, boxedText, frameRateDraw, instructionDraw, menu, titleDraw;
+  var MenuDrawMode, MenuKeyMode, MenuMode, ModeManager, TextOptions, TextOptionsDraw, boxedText, frameRateDraw, instructionDraw, menu, titleDraw;
 
   MenuKeyMode = (function() {
 
@@ -11,7 +11,6 @@
       console.log(this.p5.key.code);
       switch (this.p5.key.code) {
         case 115:
-          console.log("down");
           return "down";
         case 119:
           return "up";
@@ -42,6 +41,17 @@
       return false;
     };
 
+    MenuMode.prototype.process = function(result) {
+      switch (result) {
+        case "down":
+          this.options.increase();
+          return this.queue.push("update");
+        case "up":
+          this.options.decrease();
+          return this.queue.push("update");
+      }
+    };
+
     return MenuMode;
 
   })();
@@ -62,7 +72,10 @@
     };
 
     MenuDrawMode.prototype.process = function(mode) {
-      if (mode.get_queue() === "update") return this.draw(mode.options);
+      switch (mode.get_queue()) {
+        case "update":
+          return this.draw(mode.options);
+      }
     };
 
     return MenuDrawMode;
@@ -83,6 +96,35 @@
     boxedText(this.p5, 600, 110, "Enter");
     return this.p5.text(" - select", 650, 110);
   };
+
+  ModeManager = (function() {
+
+    function ModeManager(p5) {
+      this.p5 = p5;
+      this.initialize("Menu");
+    }
+
+    ModeManager.prototype.initialize = function(name) {
+      var p5;
+      p5 = this.p5;
+      this.logic = eval("new " + name + "Mode()");
+      this.graphic = eval("new " + name + "DrawMode(p5)");
+      return this.key = eval("new " + name + "KeyMode(p5)");
+    };
+
+    ModeManager.prototype.draw = function() {
+      return this.graphic.process(this.logic);
+    };
+
+    ModeManager.prototype.pressed = function() {
+      var result;
+      result = this.key.key_pressed();
+      return this.logic.process(result);
+    };
+
+    return ModeManager;
+
+  })();
 
   TextOptionsDraw = (function() {
 
@@ -180,16 +222,14 @@
     p5.setup = function() {
       p5.size(800, 600);
       p5.background(0);
-      this.menu = new MenuMode();
-      this.menu_draw = new MenuDrawMode(p5);
-      return this.menu_key = new MenuKeyMode(p5);
+      return this.mode = new ModeManager(p5);
     };
     p5.keyPressed = function() {
-      return this.menu_key.key_pressed();
+      return this.mode.pressed();
     };
     return p5.draw = function() {
       frameRateDraw(p5);
-      return this.menu_draw.process(this.menu);
+      return this.mode.draw();
     };
   };
 
