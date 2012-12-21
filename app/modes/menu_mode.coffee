@@ -1,5 +1,5 @@
 class MenuMode
-  constructor:() ->
+  constructor:(@mode) ->
     @options = new TextOptions()
     @options.add_text(["New Game", "Test Arena"])
     @queue = []
