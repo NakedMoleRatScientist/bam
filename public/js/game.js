@@ -1,5 +1,32 @@
 (function() {
-  var MenuDrawMode, MenuMode, TextOptions, TextOptionsDraw, frameRateDraw, menu, titleDraw;
+  var MenuDrawMode, MenuKeyMode, MenuMode, TextOptions, TextOptionsDraw, boxedText, frameRateDraw, instructionDraw, menu, titleDraw;
+
+  MenuKeyMode = (function() {
+
+    function MenuKeyMode(p5) {
+      this.p5 = p5;
+    }
+
+    MenuKeyMode.prototype.key_pressed = function() {
+      console.log(this.p5.key.code);
+      switch (this.p5.key.code) {
+        case 115:
+          console.log("down");
+          return "down";
+        case 119:
+          return "up";
+        case 10:
+          return "select";
+        default:
+          return false;
+      }
+    };
+
+    MenuKeyMode.prototype.mouse_pressed = function(state) {};
+
+    return MenuKeyMode;
+
+  })();
 
   MenuMode = (function() {
 
@@ -27,9 +54,11 @@
       this.size = 0;
     }
 
-    MenuDrawMode.prototype.draw = function() {
+    MenuDrawMode.prototype.draw = function(object) {
       this.p5.background(0);
-      return titleDraw(this.p5);
+      titleDraw(this.p5);
+      this.texts.draw(object.options, object.pointer);
+      return instructionDraw(this.p5);
     };
 
     MenuDrawMode.prototype.process = function(mode) {
@@ -43,6 +72,16 @@
   titleDraw = function(p5) {
     p5.textFont("monospace", 30);
     return p5.text("BAM!", 300, 100);
+  };
+
+  instructionDraw = function(p5) {
+    this.p5 = p5;
+    boxedText(this.p5, 500, 100, "w");
+    this.p5.text(" - up", 515, 100);
+    boxedText(this.p5, 500, 120, "s");
+    this.p5.text(" - down", 515, 120);
+    boxedText(this.p5, 600, 110, "Enter");
+    return this.p5.text(" - select", 650, 110);
   };
 
   TextOptionsDraw = (function() {
@@ -74,6 +113,14 @@
     return TextOptionsDraw;
 
   })();
+
+  boxedText = function(p5, x, y, text) {
+    var t;
+    t = p5.text(text, x, y);
+    p5.noFill();
+    p5.stroke();
+    return p5.rect(x - 3, y - p5.textAscent() - 3, p5.textWidth(text) + 3, p5.textAscent() + 3);
+  };
 
   frameRateDraw = function(p5) {
     this.p5 = p5;
@@ -134,7 +181,11 @@
       p5.size(800, 600);
       p5.background(0);
       this.menu = new MenuMode();
-      return this.menu_draw = new MenuDrawMode(p5);
+      this.menu_draw = new MenuDrawMode(p5);
+      return this.menu_key = new MenuKeyMode(p5);
+    };
+    p5.keyPressed = function() {
+      return this.menu_key.key_pressed();
     };
     return p5.draw = function() {
       frameRateDraw(p5);
