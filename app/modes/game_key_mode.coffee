@@ -1,2 +1,2 @@
 class GameKeyMode
-  constructor: () ->
+  constructor: (@p5) ->
