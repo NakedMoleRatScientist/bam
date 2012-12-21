@@ -16,3 +16,5 @@ class MenuMode
       when "up"
         @options.decrease()
         @queue.push "update"
+      when "select"
+        @mode.initialize("Game")
