@@ -3,7 +3,7 @@ class ModeManager
     this.initialize("Menu")
   initialize: (name) ->
     @logic = eval "new " + name + "Mode()"
-    @draw = eval "new " + name + "DrawMode(@p5)"
+    @graphic = eval "new " + name + "DrawMode(@p5)"
     @key = eval "new " + name + "KeyMode(@p5)"
   draw: () ->
     @draw.process(@menu)
