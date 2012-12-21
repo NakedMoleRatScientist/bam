@@ -6,4 +6,4 @@ class ModeManager
     @graphic = eval "new " + name + "DrawMode(@p5)"
     @key = eval "new " + name + "KeyMode(@p5)"
   draw: () ->
-    @draw.process(@menu)
+    @graphic.process(@menu)
