@@ -7,3 +7,6 @@ class ModeManager
     @key = eval "new " + name + "KeyMode(@p5)"
   draw: () ->
     @graphic.process(@menu)
+  pressed: () ->
+    result = @key.key_pressed()
+    @menu.process(result)
