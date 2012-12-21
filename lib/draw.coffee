@@ -15,7 +15,7 @@ menu = (p5) ->
 
   p5.draw = () ->
     frameRateDraw(p5)
-    @menu_draw.process(@menu.get_queue())
+    @menu_draw.process(@menu)
 
 $(document).ready ->
   canvas = document.getElementById "processing"
