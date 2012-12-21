@@ -6,5 +6,5 @@ class MenuMode
     @queue.push "update"
   get_queue: () ->
     if @queue.size != 0
-      return @queue.last
+      return @queue.pop()
     return false
