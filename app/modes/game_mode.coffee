@@ -1,3 +1,3 @@
 class GameMode
-  constructor: ->
+  constructor:(@mode) ->
     @map = new Map(100,100)
