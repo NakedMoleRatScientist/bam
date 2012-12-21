@@ -7,6 +7,7 @@ class MenuDrawMode
     titleDraw(@p5)
     @texts.draw(object.options,object.pointer)
     instructionDraw(@p5)
-  process: (result) ->
-    if result == "update"
-      this.draw(mode.options)
+  process: (mode) ->
+    switch(mode.get_queue())
+      when "update"
+        this.draw(mode.options)
