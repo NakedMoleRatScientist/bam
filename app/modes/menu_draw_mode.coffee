@@ -6,7 +6,7 @@ class MenuDrawMode
     @p5.background(0)
     titleDraw(@p5)
     @texts.draw(object.options,object.pointer)
-  #  instructionDraw(@p5)
+    instructionDraw(@p5)
   process: (mode) ->
     if mode.get_queue() == "update"
       this.draw(mode.options)
