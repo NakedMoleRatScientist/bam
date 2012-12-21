@@ -8,3 +8,6 @@ class MenuMode
     if @queue.size != 0
       return @queue.pop()
     return false
+  process: (result) ->
+    if result == "down"
+      @options.increase()
