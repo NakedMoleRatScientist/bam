@@ -4,10 +4,6 @@ class Map
   setup: () ->
     @map = []
     this.size_map()
-    @collision = new Collision(this)
-    @sketch = new MapSketch(this)
-    @generate = new GenerateMap(this)
-    @dest = new MapDestinate(this)
     @camera = new Camera()
     @redraw = []
   size_map: () ->
