@@ -9,6 +9,10 @@ class MenuMode
       return @queue.pop()
     return false
   process: (result) ->
-    if result == "down"
-      @options.increase()
-      @queue.push "update"
+    switch(result)
+      when "down"
+        @options.increase()
+        @queue.push "update"
+      when "up"
+        @options.decrease()
+        @queue.push "update"
