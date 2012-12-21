@@ -1,5 +1,5 @@
 (function() {
-  var MenuDrawMode, MenuKeyMode, MenuMode, ModeManager, TextOptions, TextOptionsDraw, boxedText, frameRateDraw, instructionDraw, menu, titleDraw;
+  var GameDrawMode, GameKeyMode, GameMode, MenuDrawMode, MenuKeyMode, MenuMode, ModeManager, TextOptions, TextOptionsDraw, boxedText, frameRateDraw, instructionDraw, menu, titleDraw;
 
   MenuKeyMode = (function() {
 
@@ -27,9 +27,20 @@
 
   })();
 
+  GameDrawMode = (function() {
+
+    function GameDrawMode(p5) {
+      this.p5 = p5;
+    }
+
+    return GameDrawMode;
+
+  })();
+
   MenuMode = (function() {
 
-    function MenuMode() {
+    function MenuMode(mode) {
+      this.mode = mode;
       this.options = new TextOptions();
       this.options.add_text(["New Game", "Test Arena"]);
       this.queue = [];
@@ -82,6 +93,27 @@
 
   })();
 
+  GameMode = (function() {
+
+    function GameMode(mode) {
+      this.mode = mode;
+      this.map = new Map(100, 100);
+    }
+
+    return GameMode;
+
+  })();
+
+  GameKeyMode = (function() {
+
+    function GameKeyMode(p5) {
+      this.p5 = p5;
+    }
+
+    return GameKeyMode;
+
+  })();
+
   titleDraw = function(p5) {
     p5.textFont("monospace", 30);
     return p5.text("BAM!", 300, 100);
@@ -107,7 +139,7 @@
     ModeManager.prototype.initialize = function(name) {
       var p5;
       p5 = this.p5;
-      this.logic = eval("new " + name + "Mode()");
+      this.logic = eval("new " + name + "Mode(this)");
       this.graphic = eval("new " + name + "DrawMode(p5)");
       return this.key = eval("new " + name + "KeyMode(p5)");
     };
