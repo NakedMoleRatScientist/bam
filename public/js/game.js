@@ -1,5 +1,5 @@
 (function() {
-  var GameDrawMode, GameKeyMode, GameMode, MenuDrawMode, MenuKeyMode, MenuMode, ModeManager, TextOptions, TextOptionsDraw, boxedText, frameRateDraw, instructionDraw, menu, titleDraw;
+  var GameDrawMode, GameKeyMode, GameMode, Map, MenuDrawMode, MenuKeyMode, MenuMode, ModeManager, TextOptions, TextOptionsDraw, Unit, boxedText, frameRateDraw, instructionDraw, mapDraw, menu, titleDraw;
 
   MenuKeyMode = (function() {
 
@@ -33,6 +33,10 @@
       this.p5 = p5;
     }
 
+    GameDrawMode.prototype.draw = function(object) {};
+
+    GameDrawMode.prototype.process = function(mode) {};
+
     return GameDrawMode;
 
   })();
@@ -60,6 +64,8 @@
         case "up":
           this.options.decrease();
           return this.queue.push("update");
+        case "select":
+          return this.mode.initialize("Game");
       }
     };
 
@@ -100,6 +106,10 @@
       this.map = new Map(100, 100);
     }
 
+    GameMode.prototype.get_queue = function() {};
+
+    GameMode.prototype.process = function(result) {};
+
     return GameMode;
 
   })();
@@ -110,7 +120,17 @@
       this.p5 = p5;
     }
 
+    GameKeyMode.prototype.key_pressed = function() {};
+
     return GameKeyMode;
+
+  })();
+
+  Unit = (function() {
+
+    function Unit() {}
+
+    return Unit;
 
   })();
 
@@ -158,6 +178,42 @@
 
   })();
 
+  mapDraw = function(map, p5) {
+    var end_x, end_y, height, item, objects, result, results, width, x, y, _ref, _results;
+    p5.background(0);
+    results = map.map;
+    end_y = map.camera.y + 30 - 1;
+    end_x = map.camera.x + 40 - 1;
+    _results = [];
+    for (height = _ref = map.camera.y; _ref <= end_y ? height <= end_y : height >= end_y; _ref <= end_y ? height++ : height--) {
+      _results.push((function() {
+        var _ref2, _results2;
+        _results2 = [];
+        for (width = _ref2 = map.camera.x; _ref2 <= end_x ? width <= end_x : width >= end_x; _ref2 <= end_x ? width++ : width--) {
+          x = 20 * (width - map.camera.x);
+          y = 20 * (height - map.camera.y);
+          objects = results[height][width];
+          p5.noStroke();
+          if (objects.length !== 0) {
+            _results2.push((function() {
+              var _i, _len, _results3;
+              _results3 = [];
+              for (_i = 0, _len = objects.length; _i < _len; _i++) {
+                item = objects[_i];
+                _results3.push(result = determineRectDraw(item, x, y, p5));
+              }
+              return _results3;
+            })());
+          } else {
+            _results2.push(void 0);
+          }
+        }
+        return _results2;
+      })());
+    }
+    return _results;
+  };
+
   TextOptionsDraw = (function() {
 
     function TextOptionsDraw(p5, x, y, size) {
@@ -195,6 +251,41 @@
     p5.stroke();
     return p5.rect(x - 3, y - p5.textAscent() - 3, p5.textWidth(text) + 3, p5.textAscent() + 3);
   };
+
+  Map = (function() {
+
+    function Map(width, height) {
+      this.width = width;
+      this.height = height;
+      this.setup();
+    }
+
+    Map.prototype.setup = function() {
+      this.map = [];
+      this.size_map();
+      return this.camera = new Camera();
+    };
+
+    Map.prototype.size_map = function() {
+      var x, y, _ref, _results;
+      _results = [];
+      for (y = 0, _ref = this.height - 1; 0 <= _ref ? y <= _ref : y >= _ref; 0 <= _ref ? y++ : y--) {
+        this.map.push(new Array(this.width));
+        _results.push((function() {
+          var _ref2, _results2;
+          _results2 = [];
+          for (x = 0, _ref2 = this.width - 1; 0 <= _ref2 ? x <= _ref2 : x >= _ref2; 0 <= _ref2 ? x++ : x--) {
+            _results2.push(this.map[y][x] = []);
+          }
+          return _results2;
+        }).call(this));
+      }
+      return _results;
+    };
+
+    return Map;
+
+  })();
 
   frameRateDraw = function(p5) {
     this.p5 = p5;
