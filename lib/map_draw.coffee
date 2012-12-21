@@ -16,5 +16,3 @@ mapDraw = (map,p5) ->
             result = determineRectDraw(item,x,y,p5)
             if result != true
               delay.push(result)
-    for d in delay
-      crystalStockpileDraw(p5,d.x,d.y)
