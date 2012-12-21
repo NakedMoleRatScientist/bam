@@ -8,12 +8,14 @@ menu = (p5) ->
     @menu = new MenuMode()
     @menu_draw = new MenuDrawMode(p5)
     @menu_key = new MenuKeyMode(p5)
+
   p5.keyPressed = () ->
-    @menu_key.key_pressed()
+    result = @menu_key.key_pressed()
+    @menu.process(result)
 
   p5.draw = () ->
     frameRateDraw(p5)
-    @menu_draw.process(@menu)
+    @menu_draw.process(@menu.get_queue())
 
 $(document).ready ->
   canvas = document.getElementById "processing"
