@@ -1,3 +1,3 @@
 class Unit
   constructor: () ->
-    speed: 1
+    @speed = 1
