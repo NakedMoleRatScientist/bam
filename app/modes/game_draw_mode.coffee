@@ -1,9 +1,9 @@
 class GameDrawMode
   constructor: (@p5) ->
-  draw: (map) ->
+  draw: (mode) ->
     @p5.background(0)
-    mapDraw(map,@p5)
+    mapDraw(mode.map.map,@p5)
   process: (mode) ->
     switch(mode.get_queue())
       when "update"
-        this.draw(mode.map.map)
+        this.draw(mode)
