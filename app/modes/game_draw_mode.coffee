@@ -6,4 +6,4 @@ class GameDrawMode
   process: (mode) ->
     switch(mode.get_queue())
       when "update"
-        this.draw(mode.map)
+        this.draw(mode.map.map)
