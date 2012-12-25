@@ -1,0 +1,3 @@
+class UnitsManager
+  constructor:() ->
+    @units = []
