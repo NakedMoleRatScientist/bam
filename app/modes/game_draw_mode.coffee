@@ -1,7 +1,7 @@
 class GameDrawMode
   constructor: (@p5) ->
   draw: (map) ->
-    @p5.backgound(0)
+    @p5.background(0)
     mapDraw(map,@p5)
   process: (mode) ->
     switch(mode.get_queue())
