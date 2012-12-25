@@ -1,2 +1,3 @@
 class Grunt extends Unit
-  constructor: () ->
+  constructor: (x,y) ->
+    super(x,y)
