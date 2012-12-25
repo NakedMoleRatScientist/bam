@@ -1,3 +1,3 @@
 class Unit
-  constructor: () ->
+  constructor: (@x,@y) ->
     @speed = 1
