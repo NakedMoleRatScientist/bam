@@ -20,6 +20,7 @@ class UnitsManager
 
   remove_target: (target) ->
     @units = @units.filter (x) -> x != target
+    console.log("Survivor: " + @units[0].name)
 
   exchange_fire: (target) ->
     strike = Math.random() * 10
