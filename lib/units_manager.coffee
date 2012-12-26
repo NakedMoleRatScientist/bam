@@ -3,6 +3,7 @@ class UnitsManager
     @units = []
     @units.push(new Grunt(20,20,this))
     @units.push(new Enemy(20,0,this))
+
   select_target: (unit) ->
     if unit.align == 2
       find = 0
@@ -12,3 +13,8 @@ class UnitsManager
       if u.align == find
         return u
     return null
+
+  exchange_fire: (attacker, target) ->
+    strike = rand() * 10
+    if strike > 5
+      target.health -= rand() * 10
