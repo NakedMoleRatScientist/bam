@@ -5,6 +5,7 @@ class Unit
     @align = 0
     @queue = []
     @target = null
+    @health = 100
   empty_queue: () ->
     if @queue.length == 0
       @queue.push("find")
