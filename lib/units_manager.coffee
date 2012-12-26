@@ -19,13 +19,11 @@ class UnitsManager
     return null
 
   remove_target: (target) ->
-    @units = @units.filter(x) -> x == target
+    @units = @units.filter (x) -> x != target
 
   exchange_fire: (target) ->
     strike = Math.random() * 10
     if strike > 5
-      console.log("BAM")
-      console.log(target)
       target.health -= Math.random() * 10
     cover = Math.random() * 10
     if cover > 5
@@ -33,5 +31,6 @@ class UnitsManager
     if target.health > 0
       return "fire"
     else
+      console.log(target.name)
       this.remove_target(target)
       return "find"
