@@ -3,6 +3,8 @@ class GameMode
     @map = new Map(20,30)
     @queue = ["update"]
     @units = new UnitsManager()
+  run: () ->
+    @units.run()
   get_queue: () ->
     if @queue.size != 0
       return @queue.pop()
