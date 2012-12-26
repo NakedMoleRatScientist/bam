@@ -13,7 +13,8 @@ class Unit
 
   pinned_down: () ->
     if @override > 0
-    @override -= 1
+      @override -= 1
+
   act: () ->
     this.pinned_down()
     this.empty_queue()
