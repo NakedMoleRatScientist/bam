@@ -21,3 +21,7 @@ class UnitsManager
     cover = rand() * 10
     if cover > 5
       target.take_cover()
+    if target.health > 0
+      return "fire"
+    else
+      return "find"
