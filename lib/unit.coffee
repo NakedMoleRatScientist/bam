@@ -24,4 +24,4 @@ class Unit
     @manager.exchange_fire(@target)
 
   take_cover: () ->
-    @override = 100
+    @override += 100
