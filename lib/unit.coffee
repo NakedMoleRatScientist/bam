@@ -8,3 +8,4 @@ class Unit
     if @queue.length == 0
       @queue.push("find")
   act: () ->
+    this.empty_queue()
