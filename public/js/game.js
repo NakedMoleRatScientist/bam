@@ -1,7 +1,12 @@
 (function() {
-  var Camera, GameDrawMode, GameKeyMode, GameMode, Grunt, Map, MenuDrawMode, MenuKeyMode, MenuMode, ModeManager, TextOptions, TextOptionsDraw, Unit, UnitsManager, boxedText, enemyDraw, frameRateDraw, gruntDraw, instructionDraw, mapDraw, menu, titleDraw,
+  var Camera, Enemy, GameDrawMode, GameKeyMode, GameMode, Grunt, Map, MenuDrawMode, MenuKeyMode, MenuMode, ModeManager, TextOptions, TextOptionsDraw, Unit, UnitsManager, boxedText, frameRateDraw, instructionDraw, mapDraw, menu, titleDraw, unitDraw,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  unitDraw = function(unit, p5) {
+    p5.fill(255);
+    return p5.text(unit.name, (unit.x + 1) * 20, (unit.y + 1) * 20);
+  };
 
   ModeManager = (function() {
 
@@ -28,6 +33,10 @@
       return this.logic.process(result);
     };
 
+    ModeManager.prototype.run = function() {
+      return this.logic.run();
+    };
+
     return ModeManager;
 
   })();
@@ -38,7 +47,42 @@
       this.x = x;
       this.y = y;
       this.speed = 1;
+      this.align = 0;
+      this.queue = [];
+      this.target = null;
+      this.health = 100;
+      this.override = 0;
     }
+
+    Unit.prototype.empty_queue = function() {
+      if (this.queue.length === 0) return this.queue.push("find");
+    };
+
+    Unit.prototype.pinned_down = function() {
+      if (this.override > 0) return this.override -= 1;
+    };
+
+    Unit.prototype.act = function() {
+      this.pinned_down();
+      this.empty_queue();
+      switch (this.queue.pop()) {
+        case "find":
+          return this.find();
+      }
+    };
+
+    Unit.prototype.find = function() {
+      this.target = this.manager.select_target(this);
+      return this.queue.push("fire");
+    };
+
+    Unit.prototype.fire = function() {
+      return this.manager.exchange_fire(this.target);
+    };
+
+    Unit.prototype.take_cover = function() {
+      return this.override += 100;
+    };
 
     return Unit;
 
@@ -70,7 +114,49 @@
 
     function UnitsManager() {
       this.units = [];
+      this.units.push(new Grunt(20, 20, this));
+      this.units.push(new Enemy(20, 0, this));
     }
+
+    UnitsManager.prototype.run = function() {
+      var u, _i, _len, _ref, _results;
+      _ref = this.units;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        u = _ref[_i];
+        _results.push(u.act());
+      }
+      return _results;
+    };
+
+    UnitsManager.prototype.select_target = function(unit) {
+      var find, u, _i, _len, _ref;
+      if (unit.align === 2) {
+        find = 0;
+      } else {
+        find = 2;
+      }
+      _ref = this.units;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        u = _ref[_i];
+        if (u.align === find) return u;
+      }
+      return null;
+    };
+
+    UnitsManager.prototype.exchange_fire = function(attacker, target) {
+      var cover, strike;
+      strike = rand() * 10;
+      if (strike > 5) target.health -= rand() * 10;
+      cover = rand() * 10;
+      if (cover > 5) target.take_cover();
+      if (target.health > 0) {
+        return "fire";
+      } else {
+        this.remove_target();
+        return "find";
+      }
+    };
 
     return UnitsManager;
 
@@ -226,6 +312,7 @@
     };
     return p5.draw = function() {
       frameRateDraw(p5);
+      this.mode.run();
       return this.mode.draw();
     };
   };
@@ -269,16 +356,23 @@
       this.p5 = p5;
     }
 
-    GameDrawMode.prototype.draw = function(map) {
+    GameDrawMode.prototype.draw = function(mode) {
+      var u, _i, _len, _ref, _results;
       this.p5.background(0);
-      mapDraw(map, this.p5);
-      return gruntDraw(5, 5, this.p5);
+      mapDraw(mode.map.map, this.p5);
+      _ref = mode.units.units;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        u = _ref[_i];
+        _results.push(unitDraw(u, this.p5));
+      }
+      return _results;
     };
 
     GameDrawMode.prototype.process = function(mode) {
       switch (mode.get_queue()) {
         case "update":
-          return this.draw(mode.map.map);
+          return this.draw(mode);
       }
     };
 
@@ -295,6 +389,8 @@
       this.queue = [];
       this.queue.push("update");
     }
+
+    MenuMode.prototype.run = function() {};
 
     MenuMode.prototype.get_queue = function() {
       if (this.queue.size !== 0) return this.queue.pop();
@@ -353,6 +449,10 @@
       this.units = new UnitsManager();
     }
 
+    GameMode.prototype.run = function() {
+      return this.units.run();
+    };
+
     GameMode.prototype.get_queue = function() {
       if (this.queue.size !== 0) return this.queue.pop();
       return false;
@@ -376,23 +476,34 @@
 
   })();
 
+  Enemy = (function(_super) {
+
+    __extends(Enemy, _super);
+
+    function Enemy(x, y, manager) {
+      this.manager = manager;
+      this.name = "E";
+      Enemy.__super__.constructor.call(this, x, y);
+      this.align = 2;
+    }
+
+    return Enemy;
+
+  })(Unit);
+
   Grunt = (function(_super) {
 
     __extends(Grunt, _super);
 
-    function Grunt(x, y) {
+    function Grunt(x, y, manager) {
+      this.manager = manager;
+      this.name = "G";
       Grunt.__super__.constructor.call(this, x, y);
     }
 
     return Grunt;
 
   })(Unit);
-
-  gruntDraw = function(x, y, p5) {
-    p5.fill(255);
-    console.log("beep");
-    return p5.text("G", x * 20, y * 20);
-  };
 
   titleDraw = function(p5) {
     p5.textFont("monospace", 30);
@@ -407,10 +518,6 @@
     this.p5.text(" - down", 515, 120);
     boxedText(this.p5, 600, 110, "Enter");
     return this.p5.text(" - select", 650, 110);
-  };
-
-  enemyDraw = function(x, y, p5) {
-    return p5.text("E", x * 20, y * 20);
   };
 
 }).call(this);
