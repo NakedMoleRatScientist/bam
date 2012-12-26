@@ -4,6 +4,10 @@ class UnitsManager
     @units.push(new Grunt(20,20,this))
     @units.push(new Enemy(20,0,this))
 
+  run: () ->
+    for u in @units
+      u.act()
+
   select_target: (unit) ->
     if unit.align == 2
       find = 0
