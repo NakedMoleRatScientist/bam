@@ -16,3 +16,4 @@ class Unit
 
   find: () ->
     @target = @manager.select_target()
+    @queue.push("fire")
