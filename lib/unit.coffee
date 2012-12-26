@@ -10,7 +10,11 @@ class Unit
   empty_queue: () ->
     if @queue.length == 0
       @queue.push("find")
+
+  pinned_down: () ->
+    @override -= 1
   act: () ->
+    this.pinned_down()
     this.empty_queue()
     switch(@queue.pop())
       when "find"
