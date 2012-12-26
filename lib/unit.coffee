@@ -6,6 +6,7 @@ class Unit
     @queue = []
     @target = null
     @health = 100
+    @override = 0
   empty_queue: () ->
     if @queue.length == 0
       @queue.push("find")
@@ -21,3 +22,5 @@ class Unit
 
   fire: () ->
     @manager.exchange_fire(@target)
+
+  take_cover: () ->
