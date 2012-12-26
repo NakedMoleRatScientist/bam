@@ -27,7 +27,7 @@ class Unit
     @queue.push("fire")
 
   fire: () ->
-    @manager.exchange_fire(@target)
+    @queue.push @manager.exchange_fire(@target)
 
   take_cover: () ->
     @override += 100
