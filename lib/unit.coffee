@@ -15,3 +15,4 @@ class Unit
         this.find()
 
   find: () ->
+    @target = @manager.select_target()
