@@ -28,4 +28,5 @@ class UnitsManager
     if target.health > 0
       return "fire"
     else
+      this.remove_target()
       return "find"
