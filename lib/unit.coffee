@@ -16,7 +16,7 @@ class Unit
         this.find()
 
   find: () ->
-    @target = @manager.select_target()
+    @target = @manager.select_target(this)
     @queue.push("fire")
 
   fire: () ->
