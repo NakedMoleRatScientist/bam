@@ -13,7 +13,7 @@ class UnitsManager
       find = 0
     else
       find = 2
-    for u in units
+    for u in @units
       if u.align == find
         return u
     return null
