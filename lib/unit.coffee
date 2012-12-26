@@ -21,6 +21,8 @@ class Unit
     switch(@queue.pop())
       when "find"
         this.find()
+      when "fire"
+        this.fire()
 
   find: () ->
     @target = @manager.select_target(this)
