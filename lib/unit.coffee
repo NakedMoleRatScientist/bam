@@ -17,3 +17,6 @@ class Unit
   find: () ->
     @target = @manager.select_target()
     @queue.push("fire")
+
+  fire: () ->
+    @manager.exchange_fire(this,@target)
