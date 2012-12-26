@@ -18,6 +18,9 @@ class UnitsManager
         return u
     return null
 
+  remove_target: (target) ->
+    @units = @units.filter(x) -> x == target
+
   exchange_fire: (attacker, target) ->
     strike = rand() * 10
     if strike > 5
@@ -28,5 +31,5 @@ class UnitsManager
     if target.health > 0
       return "fire"
     else
-      this.remove_target()
+      this.remove_target(target)
       return "find"
