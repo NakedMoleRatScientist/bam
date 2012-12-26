@@ -4,6 +4,7 @@ class Unit
     #0 for ally. 1 for neutral. 2 for enemy.
     @align = 0
     @queue = []
-  act: () ->
+  empty_queue: () ->
     if @queue.length == 0
       @queue.push("find")
+  act: () ->
