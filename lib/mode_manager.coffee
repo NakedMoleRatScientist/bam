@@ -11,3 +11,5 @@ class ModeManager
   pressed: () ->
     result = @key.key_pressed()
     @logic.process(result)
+  run: () ->
+    @logic.run()
