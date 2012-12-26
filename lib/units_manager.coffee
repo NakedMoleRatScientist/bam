@@ -18,3 +18,6 @@ class UnitsManager
     strike = rand() * 10
     if strike > 5
       target.health -= rand() * 10
+    cover = rand() * 10
+    if cover > 5
+      target.take_cover()
