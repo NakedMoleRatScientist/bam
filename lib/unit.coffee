@@ -20,4 +20,4 @@ class Unit
     @queue.push("fire")
 
   fire: () ->
-    @manager.exchange_fire(this,@target)
+    @manager.exchange_fire(@target)
