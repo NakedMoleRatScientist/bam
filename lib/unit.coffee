@@ -14,15 +14,17 @@ class Unit
   pinned_down: () ->
     if @override > 0
       @override -= 1
+      true
+    false
 
   act: () ->
-    this.pinned_down()
-    this.empty_queue()
-    switch(@queue.pop())
-      when "find"
-        this.find()
-      when "fire"
-        this.fire()
+    if this.pinned_down() != true
+      this.empty_queue()
+      switch(@queue.pop())
+        when "find"
+          this.find()
+        when "fire"
+          this.fire()
 
   find: () ->
     @target = @manager.select_target(this)
