@@ -21,10 +21,11 @@ class UnitsManager
   remove_target: (target) ->
     @units = @units.filter(x) -> x == target
 
-  exchange_fire: (attacker, target) ->
+  exchange_fire: (target) ->
     strike = Math.random() * 10
     if strike > 5
       console.log("BAM")
+      console.log(target)
       target.health -= Math.random() * 10
     cover = Math.random() * 10
     if cover > 5
