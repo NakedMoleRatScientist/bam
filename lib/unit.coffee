@@ -10,7 +10,8 @@ class Unit
       @queue.push("find")
   act: () ->
     this.empty_queue()
-    switch(@queue)
+    switch(@queue.pop())
       when "find"
         this.find()
+
   find: () ->
