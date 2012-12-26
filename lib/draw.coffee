@@ -12,7 +12,7 @@ menu = (p5) ->
 
   p5.draw = () ->
     frameRateDraw(p5)
-    @logic.run()
+    @mode.run()
     @mode.draw()
 
 $(document).ready ->
