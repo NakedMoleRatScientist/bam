@@ -12,6 +12,7 @@ class Unit
       @queue.push("find")
 
   pinned_down: () ->
+    if @override > 0
     @override -= 1
   act: () ->
     this.pinned_down()
