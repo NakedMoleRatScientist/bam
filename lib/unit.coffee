@@ -30,11 +30,11 @@ class Unit
         this.fire()
 
   aim: () ->
-    if @aim == 0
-      @aim = 5
+    if @charge == 0
+      @charge = 5
     else
-      @aim -= 1
-      if @aim == 0
+      @charge -= 1
+      if @charge == 0
         @queue.push("fire")
 
   find: () ->
