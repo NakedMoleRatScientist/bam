@@ -14,8 +14,6 @@ class Unit
   cover_countdown: () ->
     if @pinned > 0
       @pinned -= 1
-      true
-    false
 
   act: () ->
     this.empty_queue()
@@ -30,6 +28,7 @@ class Unit
   find: () ->
     @target = @manager.select_target(this)
     if @target != null
+      @queue.pop()
       @queue.push("fire")
 
   fire: () ->
