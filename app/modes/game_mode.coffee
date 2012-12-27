@@ -6,7 +6,7 @@ class GameMode
   run: () ->
     @units.run()
   get_queue: () ->
-    if @queue.size != 0
+    if @queue.length != 0
       return @queue.pop()
     false
   draw_units: () ->
