@@ -6,7 +6,7 @@ class UnitsManager
     @frame = 0
   run: () ->
     if @frame % 5 == 0
-      @queue.push("units")
+      @game.queue.push("units")
     for u in @units
       u.act()
     @frame += 1
