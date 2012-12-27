@@ -8,4 +8,4 @@ class GameDrawMode
   process: (mode) ->
     switch(mode.get_queue())
       when "update"
-        this.draw(mode)
+        this.initial_draw(mode)
