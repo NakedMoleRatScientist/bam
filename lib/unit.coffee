@@ -36,11 +36,12 @@ class Unit
       @aim -= 1
       if @aim == 0
         @queue.push("fire")
+
   find: () ->
     @target = @manager.select_target(this)
     if @target != null
       @queue.pop()
-      @queue.push("fire")
+      @queue.push("aim")
 
   fire: () ->
     @queue.pop()
