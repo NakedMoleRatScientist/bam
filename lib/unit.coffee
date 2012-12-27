@@ -19,7 +19,7 @@ class Unit
 
   act: () ->
     this.empty_queue()
-    switch(@queue[@queue.length - 1]
+    switch(@queue[@queue.length - 1])
       when "find"
         this.find()
       when "pinned"
