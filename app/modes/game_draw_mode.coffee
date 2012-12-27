@@ -9,7 +9,8 @@ class GameDrawMode
     for u in mode.units.units
       unitDraw(u,@p5)
   process: (mode) ->
-    switch(mode.get_queue())
+    msg = mode.get_queue()
+    switch(msg.name)
       when "update"
         this.initial_draw(mode)
       when "units"
