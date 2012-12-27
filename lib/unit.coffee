@@ -6,25 +6,28 @@ class Unit
     @queue = []
     @target = null
     @health = 100
-    @override = 0
+    @pinned = 0
   empty_queue: () ->
     if @queue.length == 0
       @queue.push("find")
 
-  pinned_down: () ->
-    if @override > 0
-      @override -= 1
+  cover_countdown: () ->
+    if @pinned > 0
+      @pinned -= 1
       true
     false
 
   act: () ->
-    if this.pinned_down() != true
+    this.cover_countdown()
+    if @pinned == 0
       this.empty_queue()
       switch(@queue.pop())
         when "find"
           this.find()
         when "fire"
           this.fire()
+    else
+      console.log("confirmed. no activity is occuring")
 
   find: () ->
     @target = @manager.select_target(this)
@@ -35,4 +38,4 @@ class Unit
     @queue.push @manager.exchange_fire(@target)
 
   take_cover: () ->
-    @override += 100
+    @pinned += 100
