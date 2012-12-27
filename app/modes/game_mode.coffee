@@ -2,7 +2,7 @@ class GameMode
   constructor:(@mode) ->
     @map = new Map(20,30)
     @queue = ["update"]
-    @units = new UnitsManager()
+    @units = new UnitsManager(@mode)
   run: () ->
     @units.run()
   get_queue: () ->
