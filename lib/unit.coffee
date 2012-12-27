@@ -34,6 +34,7 @@ class Unit
       @queue.push("fire")
 
   fire: () ->
+    @queue.pop()
     @queue.push @manager.exchange_fire(@target)
 
   take_cover: () ->
