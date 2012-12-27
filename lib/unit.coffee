@@ -18,14 +18,12 @@ class Unit
     false
 
   act: () ->
-    this.cover_countdown()
-    if @pinned == 0
-      this.empty_queue()
-      switch(@queue.pop())
-        when "find"
-          this.find()
-        when "fire"
-          this.fire()
+    this.empty_queue()
+    switch(@queue.pop())
+      when "find"
+        this.find()
+      when "fire"
+        this.fire()
 
   find: () ->
     @target = @manager.select_target(this)
