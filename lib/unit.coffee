@@ -14,6 +14,8 @@ class Unit
   cover_countdown: () ->
     if @pinned > 0
       @pinned -= 1
+    else
+      @queue.pop()
 
   act: () ->
     this.empty_queue()
