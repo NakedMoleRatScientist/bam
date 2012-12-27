@@ -11,4 +11,6 @@ class GameMode
     false
   draw_units: () ->
     @queue.push((name: "units"))
+  note_death: (target) ->
+    @queue.push((name: "death", x: target.x, y: target.y))
   process: (result) ->
