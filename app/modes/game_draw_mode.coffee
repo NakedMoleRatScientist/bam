@@ -1,6 +1,6 @@
 class GameDrawMode
   constructor: (@p5) ->
-  draw: (mode) ->
+  initial_draw: (mode) ->
     @p5.background(0)
     mapDraw(mode.map.map,@p5)
     for u in mode.units.units
