@@ -1,10 +1,14 @@
 (function() {
-  var Camera, Enemy, GameDrawMode, GameKeyMode, GameMode, Grunt, Map, MenuDrawMode, MenuKeyMode, MenuMode, ModeManager, TextOptions, TextOptionsDraw, Unit, UnitsManager, boxedText, frameRateDraw, instructionDraw, mapDraw, menu, titleDraw, unitDraw,
+  var Camera, Enemy, GameDrawMode, GameKeyMode, GameMode, Grunt, Map, MenuDrawMode, MenuKeyMode, MenuMode, ModeManager, TextOptions, TextOptionsDraw, Unit, UnitsManager, boxedText, dirtyDraw, frameRateDraw, instructionDraw, mapDraw, menu, titleDraw, unitDraw,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   unitDraw = function(unit, p5) {
-    p5.fill(255);
+    if (unit.pinned > 0) {
+      p5.fill(211, 211, 211);
+    } else {
+      p5.fill(255);
+    }
     return p5.text(unit.name, (unit.x + 1) * 20, (unit.y + 1) * 20);
   };
 
@@ -41,6 +45,11 @@
 
   })();
 
+  dirtyDraw = function(p5, x, y) {
+    p5.fill(0);
+    return p5.rect(x * 20, y * 20, 20, 20);
+  };
+
   Unit = (function() {
 
     function Unit(x, y) {
@@ -51,37 +60,65 @@
       this.queue = [];
       this.target = null;
       this.health = 100;
-      this.override = 0;
+      this.pinned = 0;
+      this.charge = 0;
     }
 
     Unit.prototype.empty_queue = function() {
       if (this.queue.length === 0) return this.queue.push("find");
     };
 
-    Unit.prototype.pinned_down = function() {
-      if (this.override > 0) return this.override -= 1;
+    Unit.prototype.cover_countdown = function() {
+      if (this.pinned > 0) {
+        return this.pinned -= 1;
+      } else {
+        return this.queue.pop();
+      }
     };
 
     Unit.prototype.act = function() {
-      this.pinned_down();
       this.empty_queue();
-      switch (this.queue.pop()) {
+      switch (this.queue[this.queue.length - 1]) {
         case "find":
           return this.find();
+        case "aim":
+          return this.aim();
+        case "pinned":
+          return this.cover_countdown();
+        case "fire":
+          return this.fire();
+      }
+    };
+
+    Unit.prototype.aim = function() {
+      if (this.charge === 0) {
+        return this.charge = 5;
+      } else {
+        this.charge -= 1;
+        if (this.charge === 0) return this.queue.push("fire");
       }
     };
 
     Unit.prototype.find = function() {
       this.target = this.manager.select_target(this);
-      return this.queue.push("fire");
+      if (this.target !== null) {
+        this.queue.pop();
+        return this.queue.push("aim");
+      }
     };
 
     Unit.prototype.fire = function() {
-      return this.manager.exchange_fire(this.target);
+      this.queue.pop();
+      return this.queue.push(this.manager.exchange_fire(this.target));
     };
 
     Unit.prototype.take_cover = function() {
-      return this.override += 100;
+      if (this.pinned > 0) {
+        return this.pinned += 1;
+      } else {
+        this.pinned += 10;
+        return this.queue.push("pinned");
+      }
     };
 
     return Unit;
@@ -112,21 +149,23 @@
 
   UnitsManager = (function() {
 
-    function UnitsManager() {
+    function UnitsManager(game) {
+      this.game = game;
       this.units = [];
       this.units.push(new Grunt(20, 20, this));
       this.units.push(new Enemy(20, 0, this));
+      this.frame = 0;
     }
 
     UnitsManager.prototype.run = function() {
-      var u, _i, _len, _ref, _results;
+      var u, _i, _len, _ref;
+      if (this.frame % 5 === 0) this.game.draw_units();
       _ref = this.units;
-      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         u = _ref[_i];
-        _results.push(u.act());
+        u.act();
       }
-      return _results;
+      return this.frame += 1;
     };
 
     UnitsManager.prototype.select_target = function(unit) {
@@ -144,16 +183,37 @@
       return null;
     };
 
-    UnitsManager.prototype.exchange_fire = function(attacker, target) {
-      var cover, strike;
-      strike = rand() * 10;
-      if (strike > 5) target.health -= rand() * 10;
-      cover = rand() * 10;
-      if (cover > 5) target.take_cover();
+    UnitsManager.prototype.remove_target = function(target) {
+      this.units = this.units.filter(function(x) {
+        return x !== target;
+      });
+      return console.log("Survivor: " + this.units[0].name);
+    };
+
+    UnitsManager.prototype.calculate_shot = function(target) {
+      if (target.pinned > 0) return 8;
+      return 5;
+    };
+
+    UnitsManager.prototype.exchange_fire = function(target) {
+      var chance, cover, strike;
+      strike = Math.random() * 10;
+      chance = this.calculate_shot(target);
+      if (strike > chance) {
+        target.health -= Math.random() * 10;
+        console.log("target " + target.name + " is shot!");
+      }
+      cover = Math.random() * 10;
+      if (cover > 5) {
+        console.log(target.name + " tooks cover!");
+        target.take_cover();
+      }
       if (target.health > 0) {
-        return "fire";
+        return "aim";
       } else {
-        this.remove_target();
+        this.game.note_death(target);
+        console.log(target.name + " is killed!");
+        this.remove_target(target);
         return "find";
       }
     };
@@ -356,7 +416,7 @@
       this.p5 = p5;
     }
 
-    GameDrawMode.prototype.draw = function(mode) {
+    GameDrawMode.prototype.initial_draw = function(mode) {
       var u, _i, _len, _ref, _results;
       this.p5.background(0);
       mapDraw(mode.map.map, this.p5);
@@ -369,10 +429,25 @@
       return _results;
     };
 
+    GameDrawMode.prototype.update_units = function(mode) {
+      var u, _i, _len, _ref, _results;
+      _ref = mode.units.units;
+      _results = [];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        u = _ref[_i];
+        _results.push(unitDraw(u, this.p5));
+      }
+      return _results;
+    };
+
     GameDrawMode.prototype.process = function(mode) {
-      switch (mode.get_queue()) {
-        case "update":
-          return this.draw(mode);
+      var msg;
+      msg = mode.get_queue();
+      switch (msg.name) {
+        case "initialize":
+          return this.initial_draw(mode);
+        case "units":
+          return this.update_units(mode);
       }
     };
 
@@ -445,8 +520,12 @@
     function GameMode(mode) {
       this.mode = mode;
       this.map = new Map(20, 30);
-      this.queue = ["update"];
-      this.units = new UnitsManager();
+      this.queue = [
+        {
+          name: "initialize"
+        }
+      ];
+      this.units = new UnitsManager(this);
     }
 
     GameMode.prototype.run = function() {
@@ -454,8 +533,22 @@
     };
 
     GameMode.prototype.get_queue = function() {
-      if (this.queue.size !== 0) return this.queue.pop();
+      if (this.queue.length !== 0) return this.queue.pop();
       return false;
+    };
+
+    GameMode.prototype.draw_units = function() {
+      return this.queue.push({
+        name: "units"
+      });
+    };
+
+    GameMode.prototype.note_death = function(target) {
+      return this.queue.push({
+        name: "death",
+        x: target.x,
+        y: target.y
+      });
     };
 
     GameMode.prototype.process = function(result) {};
