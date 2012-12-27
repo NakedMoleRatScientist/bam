@@ -11,7 +11,7 @@ class GameDrawMode
   process: (mode) ->
     msg = mode.get_queue()
     switch(msg.name)
-      when "update"
+      when "initialize"
         this.initial_draw(mode)
       when "units"
         this.update_units(mode)
