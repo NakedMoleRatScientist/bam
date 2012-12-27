@@ -19,9 +19,11 @@ class Unit
 
   act: () ->
     this.empty_queue()
-    switch(@queue.pop())
+    switch(@queue[@queue.length - 1]
       when "find"
         this.find()
+      when "pinned"
+        this.cover_countdown()
       when "fire"
         this.fire()
 
