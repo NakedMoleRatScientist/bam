@@ -39,7 +39,7 @@ class UnitsManager
       console.log(target.name + " tooks cover!")
       target.take_cover()
     if target.health > 0
-      return "fire"
+      return "aim"
     else
       console.log(target.name)
       this.remove_target(target)
