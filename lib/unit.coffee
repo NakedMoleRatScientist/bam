@@ -7,6 +7,7 @@ class Unit
     @target = null
     @health = 100
     @pinned = 0
+    @charge = 0
   empty_queue: () ->
     if @queue.length == 0
       @queue.push("find")
