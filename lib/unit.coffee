@@ -22,11 +22,20 @@ class Unit
     switch(@queue[@queue.length - 1])
       when "find"
         this.find()
+      when "aim"
+        this.aim()
       when "pinned"
         this.cover_countdown()
       when "fire"
         this.fire()
 
+  aim: () ->
+    if @aim == 0
+      @aim = 5
+    else
+      @aim -= 1
+      if @aim == 0
+        @queue.push("fire")
   find: () ->
     @target = @manager.select_target(this)
     if @target != null
