@@ -5,9 +5,12 @@ class UnitsManager
     @units.push(new Enemy(20,0,this))
     @frame = 0
   run: () ->
-    @frame += 1
+    if @frame % 5 == 0
+      @queue.push("units")
     for u in @units
       u.act()
+    @frame += 1
+
 
   select_target: (unit) ->
     if unit.align == 2
