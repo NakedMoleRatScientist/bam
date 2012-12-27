@@ -26,8 +26,6 @@ class Unit
           this.find()
         when "fire"
           this.fire()
-    else
-      console.log("pinned!")
 
   find: () ->
     @target = @manager.select_target(this)
@@ -38,6 +36,7 @@ class Unit
     @queue.push @manager.exchange_fire(@target)
 
   take_cover: () ->
-    if @pinned > 100
+    if @pinned > 0
       @pinned += 1
-    @pinned += 100
+    else
+      @pinned += 10
