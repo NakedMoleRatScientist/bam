@@ -3,8 +3,9 @@ class UnitsManager
     @units = []
     @units.push(new Grunt(20,20,this))
     @units.push(new Enemy(20,0,this))
-
+    @frame = 0
   run: () ->
+    @frame += 1
     for u in @units
       u.act()
 
