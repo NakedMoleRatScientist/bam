@@ -40,3 +40,4 @@ class Unit
       @pinned += 1
     else
       @pinned += 10
+      @queue.push("pinned")
