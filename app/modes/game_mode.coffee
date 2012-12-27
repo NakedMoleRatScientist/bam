@@ -9,4 +9,6 @@ class GameMode
     if @queue.size != 0
       return @queue.pop()
     false
+  draw_units: () ->
+    @queue.push((name: "units"))
   process: (result) ->
