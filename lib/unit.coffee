@@ -27,7 +27,7 @@ class Unit
         when "fire"
           this.fire()
     else
-      console.log("confirmed. no activity is occuring")
+      console.log("pinned!")
 
   find: () ->
     @target = @manager.select_target(this)
@@ -38,4 +38,6 @@ class Unit
     @queue.push @manager.exchange_fire(@target)
 
   take_cover: () ->
+    if @pinned > 100
+      @pinned += 1
     @pinned += 100
