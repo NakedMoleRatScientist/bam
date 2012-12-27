@@ -12,5 +12,5 @@ class GameDrawMode
     switch(mode.get_queue())
       when "update"
         this.initial_draw(mode)
-      when "update_unit"
+      when "units"
         this.update_units(mode)
