@@ -9,7 +9,7 @@ class GameDrawMode
     for u in mode.units.units
       unitDraw(u,@p5)
   cleanup: (msg) ->
-    dirtyDraw(@p5,msg.x,msg.y,)
+    dirtyDraw(@p5,msg)
 
   draw_bullet: (msg) ->
     bulletDraw(@p5,msg.x,msg.y)
