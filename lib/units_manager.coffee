@@ -5,8 +5,6 @@ class UnitsManager
     @units.push(new Enemy(20,0,this))
     @frame = 0
   run: () ->
-    if @frame % 5 == 0
-      @game.draw_units()
     for u in @units
       u.act()
     @frame += 1
