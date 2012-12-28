@@ -9,5 +9,5 @@ class Map
     for y in [0..@height - 1]
       @map.push(new Array(@width))
       for x in [0..@width - 1]
-        @map[y][x] = [0]
+        @map[y][x] = []
       @map[0][0] = [new Floor()]
