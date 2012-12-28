@@ -5,3 +5,5 @@ dirtyDraw = (p5,msg) ->
   for m in objects
     if m.name == "floor"
       floorDraw(p5,locate)
+    else if m.name == "bullet"
+      bulletDraw(p5,m.x,m.y)
