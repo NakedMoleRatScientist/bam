@@ -17,8 +17,8 @@ class GameDrawMode
     switch(msg.name)
       when "initialize"
         this.initial_draw(mode)
-      when "units"
-        this.update_units(mode)
+      when "unit"
+        this.draw_unit(msg)
       when "death"
         this.cleanup(msg)
       when "bullet"
