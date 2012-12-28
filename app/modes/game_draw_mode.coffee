@@ -18,3 +18,4 @@ class GameDrawMode
       when "units"
         this.update_units(mode)
       when "death"
+        this.cleanup(msg)
