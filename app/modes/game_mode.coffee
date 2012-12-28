@@ -13,4 +13,6 @@ class GameMode
     @queue.push((name: "units"))
   note_death: (target) ->
     @queue.push((name: "death", x: target.x, y: target.y))
+  bullet_add: (target) ->
+    @queue.push((name: "bullet", x: target.x, y: target.y))
   process: (result) ->
