@@ -14,3 +14,4 @@ class Map
     bullet = new Bullet(target.x,target.y)
     object = bullet.get_location()
     @map[object.y][object.x].push(object)
+    bullet
