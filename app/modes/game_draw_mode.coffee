@@ -8,6 +8,8 @@ class GameDrawMode
   update_units: (mode) ->
     for u in mode.units.units
       unitDraw(u,@p5)
+  cleanup: (msg) ->
+    dirtyDraw(@p5,msg.x,msg.y,)
   process: (mode) ->
     msg = mode.get_queue()
     switch(msg.name)
@@ -15,3 +17,4 @@ class GameDrawMode
         this.initial_draw(mode)
       when "units"
         this.update_units(mode)
+      when "death"
