@@ -6,5 +6,4 @@ mapDraw = (map,p5) ->
         unless objects.length == 0
           for o in objects
             if o.name == "floor"
-              p5.fill(190,190,190) #gray
-              p5.rect(width * 20,height * 20, 20, 20)
+              floorDraw(p5,(x: width, y: height))
