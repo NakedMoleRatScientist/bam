@@ -1,5 +1,5 @@
 (function() {
-  var Camera, Enemy, GameDrawMode, GameKeyMode, GameMode, Grunt, Map, MenuDrawMode, MenuKeyMode, MenuMode, ModeManager, TextOptions, TextOptionsDraw, Unit, UnitsManager, boxedText, dirtyDraw, frameRateDraw, instructionDraw, mapDraw, menu, titleDraw, unitDraw,
+  var Bullet, Camera, Enemy, Floor, GameDrawMode, GameKeyMode, GameMode, Grunt, Map, MenuDrawMode, MenuKeyMode, MenuMode, ModeManager, TextOptions, TextOptionsDraw, Unit, UnitsManager, boxedText, bulletDraw, dirtyDraw, floorDraw, frameRateDraw, instructionDraw, mapDraw, menu, randomOpsAddsub, titleDraw, truncateDecimals, unitDraw,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -9,7 +9,7 @@
     } else {
       p5.fill(255);
     }
-    return p5.text(unit.name, (unit.x + 1) * 20, (unit.y + 1) * 20);
+    return p5.text(unit.name, unit.x * 20, unit.y * 20 + 15);
   };
 
   ModeManager = (function() {
@@ -45,9 +45,24 @@
 
   })();
 
-  dirtyDraw = function(p5, x, y) {
+  dirtyDraw = function(p5, msg) {
+    var m, objects, _i, _len, _results;
     p5.fill(0);
-    return p5.rect(x * 20, y * 20, 20, 20);
+    p5.rect(msg.x * 20, msg.y * 20, 20, 20);
+    objects = msg.map[msg.y][msg.x];
+    console.log(objects.length);
+    _results = [];
+    for (_i = 0, _len = objects.length; _i < _len; _i++) {
+      m = objects[_i];
+      if (m.name === "floor") {
+        _results.push(floorDraw(p5, locate));
+      } else if (m.name === "Bullet") {
+        _results.push(bulletDraw(p5, m.x, m.y));
+      } else {
+        _results.push(void 0);
+      }
+    }
+    return _results;
   };
 
   Unit = (function() {
@@ -126,17 +141,32 @@
   })();
 
   mapDraw = function(map, p5) {
-    var height, width, _results;
+    var height, o, objects, width, _results;
     p5.background(0);
     _results = [];
     for (height = 0; height <= 29; height++) {
       _results.push((function() {
         var _results2;
         _results2 = [];
-        for (width = 0; width <= 30; width++) {
-          if (map[height][width] === 1) {
-            p5.fill(190, 190, 190);
-            _results2.push(p5.rect(width * 20, height * 20, 20, 20));
+        for (width = 0; width <= 39; width++) {
+          objects = map[height][width];
+          if (objects.length !== 0) {
+            _results2.push((function() {
+              var _i, _len, _results3;
+              _results3 = [];
+              for (_i = 0, _len = objects.length; _i < _len; _i++) {
+                o = objects[_i];
+                if (o.name === "floor") {
+                  _results3.push(floorDraw(p5, {
+                    x: width,
+                    y: height
+                  }));
+                } else {
+                  _results3.push(void 0);
+                }
+              }
+              return _results3;
+            })());
           } else {
             _results2.push(void 0);
           }
@@ -159,7 +189,6 @@
 
     UnitsManager.prototype.run = function() {
       var u, _i, _len, _ref;
-      if (this.frame % 5 === 0) this.game.draw_units();
       _ref = this.units;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         u = _ref[_i];
@@ -202,6 +231,8 @@
       if (strike > chance) {
         target.health -= Math.random() * 10;
         console.log("target " + target.name + " is shot!");
+      } else {
+        this.game.bullet_add(target);
       }
       cover = Math.random() * 10;
       if (cover > 5) {
@@ -252,6 +283,10 @@
 
   })();
 
+  truncateDecimals = function(n) {
+    return Math[n < 0 ? 'ceil' : 'floor'](n);
+  };
+
   boxedText = function(p5, x, y, text) {
     var t;
     t = p5.text(text, x, y);
@@ -275,19 +310,42 @@
     };
 
     Map.prototype.size_map = function() {
-      var x, y, _ref, _ref2;
+      var x, y, _ref, _results;
+      _results = [];
       for (y = 0, _ref = this.height - 1; 0 <= _ref ? y <= _ref : y >= _ref; 0 <= _ref ? y++ : y--) {
         this.map.push(new Array(this.width));
-        for (x = 0, _ref2 = this.width - 1; 0 <= _ref2 ? x <= _ref2 : x >= _ref2; 0 <= _ref2 ? x++ : x--) {
-          this.map[y][x] = 0;
-        }
+        _results.push((function() {
+          var _ref2, _results2;
+          _results2 = [];
+          for (x = 0, _ref2 = this.width - 1; 0 <= _ref2 ? x <= _ref2 : x >= _ref2; 0 <= _ref2 ? x++ : x--) {
+            _results2.push(this.map[y][x] = []);
+          }
+          return _results2;
+        }).call(this));
       }
-      return this.map[0][0] = 1;
+      return _results;
+    };
+
+    Map.prototype.add_bullet = function(target) {
+      var bullet, object;
+      bullet = new Bullet(target.x, target.y);
+      object = bullet.get_location();
+      this.map[object.y][object.x].push(bullet);
+      return bullet;
     };
 
     return Map;
 
   })();
+
+  randomOpsAddsub = function(initial, change) {
+    if (Math.random() * 10 > 5) {
+      initial -= change;
+    } else {
+      initial += change;
+    }
+    return initial;
+  };
 
   frameRateDraw = function(p5) {
     this.p5 = p5;
@@ -440,6 +498,14 @@
       return _results;
     };
 
+    GameDrawMode.prototype.cleanup = function(msg) {
+      return dirtyDraw(this.p5, msg);
+    };
+
+    GameDrawMode.prototype.draw_bullet = function(msg) {
+      return bulletDraw(this.p5, msg.x, msg.y);
+    };
+
     GameDrawMode.prototype.process = function(mode) {
       var msg;
       msg = mode.get_queue();
@@ -448,6 +514,10 @@
           return this.initial_draw(mode);
         case "units":
           return this.update_units(mode);
+        case "death":
+          return this.cleanup(msg);
+        case "bullet":
+          return this.draw_bullet(msg);
       }
     };
 
@@ -519,7 +589,7 @@
 
     function GameMode(mode) {
       this.mode = mode;
-      this.map = new Map(20, 30);
+      this.map = new Map(40, 30);
       this.queue = [
         {
           name: "initialize"
@@ -537,17 +607,22 @@
       return false;
     };
 
-    GameMode.prototype.draw_units = function() {
-      return this.queue.push({
-        name: "units"
-      });
-    };
-
     GameMode.prototype.note_death = function(target) {
       return this.queue.push({
         name: "death",
         x: target.x,
-        y: target.y
+        y: target.y,
+        map: this.map.map
+      });
+    };
+
+    GameMode.prototype.bullet_add = function(target) {
+      var location;
+      location = this.map.add_bullet(target);
+      return this.queue.push({
+        name: "bullet",
+        x: location.x,
+        y: location.y
       });
     };
 
@@ -569,6 +644,16 @@
 
   })();
 
+  Floor = (function() {
+
+    function Floor() {
+      this.name = "floor";
+    }
+
+    return Floor;
+
+  })();
+
   Enemy = (function(_super) {
 
     __extends(Enemy, _super);
@@ -583,6 +668,30 @@
     return Enemy;
 
   })(Unit);
+
+  Bullet = (function() {
+
+    function Bullet(x, y) {
+      var rand_x, rand_y;
+      x *= 20;
+      y *= 20;
+      rand_x = Math.random() * 10 + 1;
+      rand_y = Math.random() * 10 + 1;
+      this.x = randomOpsAddsub(x, rand_x);
+      this.y = randomOpsAddsub(y, rand_y);
+      this.name = "Bullet";
+    }
+
+    Bullet.prototype.get_location = function() {
+      return {
+        x: truncateDecimals(this.x / 20),
+        y: truncateDecimals(this.y / 20)
+      };
+    };
+
+    return Bullet;
+
+  })();
 
   Grunt = (function(_super) {
 
@@ -603,6 +712,11 @@
     return p5.text("BAM!", 300, 100);
   };
 
+  floorDraw = function(p5, locate) {
+    p5.fill(190, 190, 190);
+    return p5.rect(locate.x * 20, locate.y * 20, 20, 20);
+  };
+
   instructionDraw = function(p5) {
     this.p5 = p5;
     boxedText(this.p5, 500, 100, "w");
@@ -611,6 +725,12 @@
     this.p5.text(" - down", 515, 120);
     boxedText(this.p5, 600, 110, "Enter");
     return this.p5.text(" - select", 650, 110);
+  };
+
+  bulletDraw = function(p5, x, y) {
+    this.p5 = p5;
+    p5.fill(255, 255, 0);
+    return p5.rect(x, y, 2, 2);
   };
 
 }).call(this);
