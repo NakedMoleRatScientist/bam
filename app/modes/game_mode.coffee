@@ -1,6 +1,6 @@
 class GameMode
   constructor:(@mode) ->
-    @map = new Map(20,30)
+    @map = new Map(40,30)
     @queue = [(name: "initialize")]
     @units = new UnitsManager(this)
   run: () ->
