@@ -1,4 +1,6 @@
 bulletDraw = (@p5, x , y) ->
+  x *= 20
+  y = (y + 1) * 20
   rand_x = Math.random() * 10 + 1
   rand_y = Math.random() * 10 + 1
   x = randomOpsAddsub(x, rand_x)
