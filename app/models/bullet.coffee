@@ -6,5 +6,6 @@ class Bullet
     rand_y = Math.random() * 10 + 1
     @x = randomOpsAddsub(x, rand_x)
     @y = randomOpsAddsub(y, rand_y)
+    @name = "Bullet"
   get_location: () ->
     (x: truncateDecimals(@x / 20), y: truncateDecimals(@y / 20))
