@@ -10,6 +10,10 @@ class GameDrawMode
       unitDraw(u,@p5)
   cleanup: (msg) ->
     dirtyDraw(@p5,msg.x,msg.y,)
+
+  draw_bullet: (msg) ->
+    bulletDraw(@p5,msg.x,msg.y)
+
   process: (mode) ->
     msg = mode.get_queue()
     switch(msg.name)
@@ -19,3 +23,5 @@ class GameDrawMode
         this.update_units(mode)
       when "death"
         this.cleanup(msg)
+      when "bullet"
+        this.draw_bullet(msg)
