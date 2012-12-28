@@ -1,7 +1,7 @@
 mapDraw = (map,p5) ->
     p5.background(0)
     for height in [0..29]
-      for width in [0..30]
+      for width in [0..39]
         objects = map[height][width]
         unless objects.length == 0
           for o in objects
