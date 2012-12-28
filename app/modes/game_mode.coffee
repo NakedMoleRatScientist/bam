@@ -10,7 +10,7 @@ class GameMode
       return @queue.pop()
     false
   note_death: (target) ->
-    @queue.push((name: "death", x: target.x, y: target.y))
+    @queue.push((name: "death", x: target.x, y: target.y, map: @map.map
   bullet_add: (target) ->
     @queue.push((name: "bullet", x: target.x, y: target.y))
   process: (result) ->
