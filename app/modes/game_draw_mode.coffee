@@ -5,9 +5,7 @@ class GameDrawMode
     mapDraw(mode.map.map,@p5)
     for u in mode.units.units
       unitDraw(u,@p5)
-  update_units: (mode) ->
-    for u in mode.units.units
-      unitDraw(u,@p5)
+
   cleanup: (msg) ->
     dirtyDraw(@p5,msg)
 
