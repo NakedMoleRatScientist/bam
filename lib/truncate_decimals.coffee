@@ -1,2 +1,2 @@
 truncateDecimals = (n) ->
-  Math[n < 0 ? 'ceil' : 'floor'](n)
+  Math[if n < 0 then 'ceil' else 'floor'](n)
