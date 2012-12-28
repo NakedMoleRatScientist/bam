@@ -12,5 +12,6 @@ class GameMode
   note_death: (target) ->
     @queue.push((name: "death", x: target.x, y: target.y, map: @map.map))
   bullet_add: (target) ->
-    @queue.push((name: "bullet", x: target.x, y: target.y))
+    location = @map.add_bullet(target)
+    @queue.push((name: "bullet", x: location.x, y: location.y))
   process: (result) ->
