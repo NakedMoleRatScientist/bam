@@ -10,4 +10,3 @@ class Map
       @map.push(new Array(@width))
       for x in [0..@width - 1]
         @map[y][x] = []
-      @map[0][0] = [new Floor()]
