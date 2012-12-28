@@ -4,4 +4,4 @@ unitDraw = (unit,p5) ->
   else
     p5.fill(255)
 
-  p5.text(unit.name,(unit.x + 1) * 20, (unit.y + 1) * 20)
+  p5.text(unit.name,unit.x * 20, (unit.y + 1) * 20)
