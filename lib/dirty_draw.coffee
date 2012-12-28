@@ -1,7 +1,8 @@
-dirtyDraw = (p5,map,locate) ->
-  for m in map[locate.y][locate.x]
-    if o.name == "floor"
+dirtyDraw = (p5,msg) ->
+  objects = msg.map[msg.y][msg.x]
+  if objects.length == 0
+    p5.fill(0)
+    p5.rect(msg.x * 20, msg.y * 20, 20, 20)
+  for m in objects
+    if m.name == "floor"
       floorDraw(p5,locate)
-    else
-      p5.fill(0)
-      p5.rect(locate.x * 20, locate.y * 20, 20, 20)
