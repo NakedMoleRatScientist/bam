@@ -25,7 +25,6 @@ class UnitsManager
   remove_target: (target) ->
     @units = @units.filter (x) -> x != target
     console.log("Survivor: " + @units[0].name)
-
   #Individuals taking cover are much harder to shoot at than those who have no cover
   calculate_shot: (target) ->
     if target.pinned > 0
@@ -38,6 +37,8 @@ class UnitsManager
     if strike > chance
       target.health -= Math.random() * 10
       console.log("target " + target.name + " is shot!")
+    else
+      @game.bullet_add(target)
     cover = Math.random() * 10
     if cover > 5
       console.log(target.name + " tooks cover!")
