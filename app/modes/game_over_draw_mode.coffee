@@ -6,3 +6,6 @@ class GameOverDrawMode
     @p5.background(0)
 
   process: (mode) ->
+    switch(mode.get_queue())
+      when "draw"
+        this.draw(mode.options)
