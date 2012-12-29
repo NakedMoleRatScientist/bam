@@ -53,4 +53,5 @@ class Unit
       @pinned += 1
     else
       @pinned += 10
+      @manager.game.update_unit(self)
       @queue.push("pinned")
