@@ -12,7 +12,7 @@ class UnitsManager
 
   game_over: () ->
     if @units.length == 0
-      @game.over()
+      @game.initialize_over()
 
   select_target: (unit) ->
     if unit.align == 2
