@@ -16,7 +16,7 @@ class Unit
     if @pinned > 0
       @pinned -= 1
     else
-      @manager.game.update_unit(self)
+      @manager.game.update_unit(this)
       @queue.pop()
 
   act: () ->
@@ -54,5 +54,5 @@ class Unit
       @pinned += 1
     else
       @pinned += 10
-      @manager.game.update_unit(self)
+      @manager.game.update_unit(this)
       @queue.push("pinned")
