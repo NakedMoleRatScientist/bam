@@ -10,6 +10,9 @@ class UnitsManager
       u.act()
     @frame += 1
 
+  game_over: () ->
+    if @units.length == 0
+      @game.over()
 
   select_target: (unit) ->
     if unit.align == 2
