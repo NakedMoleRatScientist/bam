@@ -16,6 +16,7 @@ class Unit
     if @pinned > 0
       @pinned -= 1
     else
+      @manager.game.update_unit(self)
       @queue.pop()
 
   act: () ->
