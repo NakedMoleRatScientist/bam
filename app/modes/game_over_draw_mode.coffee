@@ -1,2 +1,2 @@
 class GameOverDrawMode
-  constructor: (@p5)
+  constructor: (@p5) ->
