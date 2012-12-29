@@ -9,10 +9,11 @@ class GameMode
     if @queue.length != 0
       return @queue.pop()
     false
+
   update_unit: (unit) ->
     @queue.push((name: "unit", unit: unit, map: @map.map , x: unit.x, y: unit.y))
 
-  note_death: (target) ->
+  dirty_redraw: (target) ->
     @queue.push((name: "death", x: target.x, y: target.y, map: @map.map))
 
   bullet_add: (target) ->
