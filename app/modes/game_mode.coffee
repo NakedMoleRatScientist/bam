@@ -3,8 +3,14 @@ class GameMode
     @map = new Map(40,30)
     @queue = [(name: "initialize")]
     @units = new UnitsManager(this)
+
   run: () ->
     @units.run()
+
+  initialize_over: () ->
+    data = (time: @units.frame)
+    @manager.initialize_with_data("GameOver", data)
+
   get_queue: () ->
     if @queue.length != 0
       return @queue.pop()
