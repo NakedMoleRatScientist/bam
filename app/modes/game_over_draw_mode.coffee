@@ -4,6 +4,7 @@ class GameOverDrawMode
 
   draw: (object) ->
     @p5.background(0)
+    @texts.draw(object.options,object.pointer)
 
   process: (mode) ->
     switch(mode.get_queue())
