@@ -1,5 +1,5 @@
 (function() {
-  var Bullet, Camera, Enemy, Floor, GameDrawMode, GameKeyMode, GameMode, Grunt, Map, MenuDrawMode, MenuKeyMode, MenuMode, ModeManager, TextOptions, TextOptionsDraw, Unit, UnitsManager, boxedText, bulletDraw, dirtyDraw, floorDraw, frameRateDraw, instructionDraw, mapDraw, menu, randomOpsAddsub, titleDraw, truncateDecimals, unitDraw,
+  var Bullet, Camera, Enemy, Floor, GameDrawMode, GameKeyMode, GameMode, GameOverDrawMode, GameOverKeyMode, GameOverMode, Grunt, Map, MenuDrawMode, MenuKeyMode, MenuMode, Mode, ModeManager, TextOptions, TextOptionsDraw, Unit, UnitsManager, boxedText, bulletDraw, dirtyDraw, floorDraw, frameRateDraw, instructionDraw, mapDraw, menu, randomOpsAddsub, titleDraw, truncateDecimals, unitDraw,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -12,6 +12,25 @@
     return p5.text(unit.name, unit.x * 20, unit.y * 20 + 15);
   };
 
+  Mode = (function() {
+
+    function Mode() {
+      this.queue = [];
+    }
+
+    Mode.prototype.run = function() {};
+
+    Mode.prototype.get_queue = function() {
+      if (this.queue.size !== 0) return this.queue.pop();
+      return false;
+    };
+
+    Mode.prototype.process = function(result) {};
+
+    return Mode;
+
+  })();
+
   ModeManager = (function() {
 
     function ModeManager(p5) {
@@ -23,6 +42,14 @@
       var p5;
       p5 = this.p5;
       this.logic = eval("new " + name + "Mode(this)");
+      this.graphic = eval("new " + name + "DrawMode(p5)");
+      return this.key = eval("new " + name + "KeyMode(p5)");
+    };
+
+    ModeManager.prototype.initialize_with_data = function(name, data) {
+      var p5;
+      p5 = this.p5;
+      this.logic = eval("new " + name + "Mode(this,data)");
       this.graphic = eval("new " + name + "DrawMode(p5)");
       return this.key = eval("new " + name + "KeyMode(p5)");
     };
@@ -50,7 +77,6 @@
     p5.fill(0);
     p5.rect(msg.x * 20, msg.y * 20, 20, 20);
     objects = msg.map[msg.y][msg.x];
-    console.log(objects.length);
     _results = [];
     for (_i = 0, _len = objects.length; _i < _len; _i++) {
       m = objects[_i];
@@ -87,6 +113,7 @@
       if (this.pinned > 0) {
         return this.pinned -= 1;
       } else {
+        this.manager.game.update_unit(this);
         return this.queue.pop();
       }
     };
@@ -132,6 +159,7 @@
         return this.pinned += 1;
       } else {
         this.pinned += 10;
+        this.manager.game.update_unit(this);
         return this.queue.push("pinned");
       }
     };
@@ -194,7 +222,12 @@
         u = _ref[_i];
         u.act();
       }
-      return this.frame += 1;
+      this.frame += 1;
+      return this.game_over();
+    };
+
+    UnitsManager.prototype.game_over = function() {
+      if (this.units.length === 1) return this.game.initialize_over();
     };
 
     UnitsManager.prototype.select_target = function(unit) {
@@ -242,7 +275,7 @@
       if (target.health > 0) {
         return "aim";
       } else {
-        this.game.note_death(target);
+        this.game.dirty_redraw(target);
         console.log(target.name + " is killed!");
         this.remove_target(target);
         return "find";
@@ -468,6 +501,23 @@
 
   })();
 
+  GameOverMode = (function(_super) {
+
+    __extends(GameOverMode, _super);
+
+    function GameOverMode(manager, data) {
+      this.manager = manager;
+      this.data = data;
+      GameOverMode.__super__.constructor.call(this);
+      this.options = new TextOptions();
+      this.options.add_text(["Framed elapsed: " + this.data.frames]);
+      this.queue.push("draw");
+    }
+
+    return GameOverMode;
+
+  })(Mode);
+
   GameDrawMode = (function() {
 
     function GameDrawMode(p5) {
@@ -487,19 +537,13 @@
       return _results;
     };
 
-    GameDrawMode.prototype.update_units = function(mode) {
-      var u, _i, _len, _ref, _results;
-      _ref = mode.units.units;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        u = _ref[_i];
-        _results.push(unitDraw(u, this.p5));
-      }
-      return _results;
-    };
-
     GameDrawMode.prototype.cleanup = function(msg) {
       return dirtyDraw(this.p5, msg);
+    };
+
+    GameDrawMode.prototype.draw_unit = function(msg) {
+      dirtyDraw(this.p5, msg);
+      return unitDraw(msg.unit, this.p5);
     };
 
     GameDrawMode.prototype.draw_bullet = function(msg) {
@@ -512,9 +556,9 @@
       switch (msg.name) {
         case "initialize":
           return this.initial_draw(mode);
-        case "units":
-          return this.update_units(mode);
-        case "death":
+        case "unit":
+          return this.draw_unit(msg);
+        case "dirty":
           return this.cleanup(msg);
         case "bullet":
           return this.draw_bullet(msg);
@@ -527,8 +571,8 @@
 
   MenuMode = (function() {
 
-    function MenuMode(mode) {
-      this.mode = mode;
+    function MenuMode(manager) {
+      this.manager = manager;
       this.options = new TextOptions();
       this.options.add_text(["New Game", "Test Arena"]);
       this.queue = [];
@@ -551,7 +595,7 @@
           this.options.decrease();
           return this.queue.push("update");
         case "select":
-          return this.mode.initialize("Game");
+          return this.manager.initialize("Game");
       }
     };
 
@@ -564,7 +608,6 @@
     function MenuDrawMode(p5) {
       this.p5 = p5;
       this.texts = new TextOptionsDraw(this.p5, 300, 250, 18);
-      this.size = 0;
     }
 
     MenuDrawMode.prototype.draw = function(object) {
@@ -585,10 +628,45 @@
 
   })();
 
+  GameOverDrawMode = (function() {
+
+    function GameOverDrawMode(p5) {
+      this.p5 = p5;
+      this.texts = new TextOptionsDraw(this.p5, 100, 100, 18);
+    }
+
+    GameOverDrawMode.prototype.draw = function(object) {
+      this.p5.background(0);
+      return this.texts.draw(object.options, object.pointer);
+    };
+
+    GameOverDrawMode.prototype.process = function(mode) {
+      switch (mode.get_queue()) {
+        case "draw":
+          return this.draw(mode.options);
+      }
+    };
+
+    return GameOverDrawMode;
+
+  })();
+
+  GameOverKeyMode = (function() {
+
+    function GameOverKeyMode(p5) {
+      this.p5 = p5;
+    }
+
+    GameOverKeyMode.prototype.key_pressed = function() {};
+
+    return GameOverKeyMode;
+
+  })();
+
   GameMode = (function() {
 
-    function GameMode(mode) {
-      this.mode = mode;
+    function GameMode(manager) {
+      this.manager = manager;
       this.map = new Map(40, 30);
       this.queue = [
         {
@@ -602,14 +680,32 @@
       return this.units.run();
     };
 
+    GameMode.prototype.initialize_over = function() {
+      var data;
+      data = {
+        frames: this.units.frame
+      };
+      return this.manager.initialize_with_data("GameOver", data);
+    };
+
     GameMode.prototype.get_queue = function() {
       if (this.queue.length !== 0) return this.queue.pop();
       return false;
     };
 
-    GameMode.prototype.note_death = function(target) {
+    GameMode.prototype.update_unit = function(unit) {
       return this.queue.push({
-        name: "death",
+        name: "unit",
+        unit: unit,
+        map: this.map.map,
+        x: unit.x,
+        y: unit.y
+      });
+    };
+
+    GameMode.prototype.dirty_redraw = function(target) {
+      return this.queue.push({
+        name: "dirty",
         x: target.x,
         y: target.y,
         map: this.map.map
