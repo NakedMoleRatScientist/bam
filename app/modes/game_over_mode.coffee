@@ -3,3 +3,4 @@ class GameOverMode extends Mode
     super()
     @options = new TextOptions()
     @options.add_text(["Framed elapsed: " + @data.frame])
+    @queue.push("draw")
