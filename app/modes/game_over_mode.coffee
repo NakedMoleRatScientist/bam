@@ -1,3 +1,3 @@
 class GameOverMode extends Mode
-  constructor: (@manager) ->
+  constructor: (@manager,@data) ->
     super()
