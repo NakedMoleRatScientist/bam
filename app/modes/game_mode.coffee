@@ -10,7 +10,7 @@ class GameMode
       return @queue.pop()
     false
   update_unit: (unit) ->
-    @queue.push((name: "unit", unit: unit))
+    @queue.push((name: "unit", unit: unit, map: @map))
 
   note_death: (target) ->
     @queue.push((name: "death", x: target.x, y: target.y, map: @map.map))
