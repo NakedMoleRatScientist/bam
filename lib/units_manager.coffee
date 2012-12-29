@@ -45,7 +45,7 @@ class UnitsManager
     if target.health > 0
       return "aim"
     else
-      @game.note_death(target)
+      @game.dirty_redraw(target)
       console.log(target.name + " is killed!")
       this.remove_target(target)
       return "find"
