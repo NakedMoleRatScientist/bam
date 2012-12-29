@@ -14,7 +14,7 @@ class GameMode
     @queue.push((name: "unit", unit: unit, map: @map.map , x: unit.x, y: unit.y))
 
   dirty_redraw: (target) ->
-    @queue.push((name: "death", x: target.x, y: target.y, map: @map.map))
+    @queue.push((name: "dirty", x: target.x, y: target.y, map: @map.map))
 
   bullet_add: (target) ->
     location = @map.add_bullet(target)
