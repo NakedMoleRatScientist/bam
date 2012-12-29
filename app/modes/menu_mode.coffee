@@ -1,5 +1,5 @@
 class MenuMode
-  constructor:(@mode) ->
+  constructor:(@manager) ->
     @options = new TextOptions()
     @options.add_text(["New Game", "Test Arena"])
     @queue = []
@@ -18,4 +18,4 @@ class MenuMode
         @options.decrease()
         @queue.push "update"
       when "select"
-        @mode.initialize("Game")
+        @manager.initialize("Game")
