@@ -9,6 +9,7 @@ class UnitsManager
     for u in @units
       u.act()
     @frame += 1
+    this.game_over()
 
   game_over: () ->
     if @units.length == 0
