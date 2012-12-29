@@ -22,7 +22,7 @@ class GameDrawMode
         this.initial_draw(mode)
       when "unit"
         this.draw_unit(msg)
-      when "death"
+      when "dirty"
         this.cleanup(msg)
       when "bullet"
         this.draw_bullet(msg)
