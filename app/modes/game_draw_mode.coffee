@@ -10,6 +10,7 @@ class GameDrawMode
     dirtyDraw(@p5,msg)
 
   draw_unit: (msg) ->
+    dirtyDraw(@p5,msg)
     unitDraw(msg.unit,@p5)
 
   draw_bullet: (msg) ->
