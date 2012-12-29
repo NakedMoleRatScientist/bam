@@ -11,7 +11,8 @@ class GameDrawMode
 
   draw_unit: (msg) ->
     dirtyDraw(@p5,msg)
-    unitDraw(msg.unit,@p5)
+    if msg.unit.health > 0
+      unitDraw(msg.unit,@p5)
 
   draw_bullet: (msg) ->
     bulletDraw(@p5,msg.x,msg.y)
