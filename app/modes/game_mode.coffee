@@ -12,7 +12,6 @@ class GameMode
 
   update_unit: (unit) ->
     @queue.push((name: "unit", unit: unit, map: @map.map , x: unit.x, y: unit.y))
-    this.dirty_redraw(unit)
 
   dirty_redraw: (target) ->
     @queue.push((name: "dirty", x: target.x, y: target.y, map: @map.map))
