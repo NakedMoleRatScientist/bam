@@ -22,7 +22,7 @@ class UnitsManager
     console.log("Survivor: " + @units[0].name)
 
   add_unit: (name,x,y) ->
-    unit = eval("new " + name + "(this,x,y)" )
+    unit = eval("new " + name + "(x,y,this)" )
     @units.push(unit)
 
 #Unit actions
