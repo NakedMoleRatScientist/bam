@@ -2,7 +2,7 @@ class GameMode
   constructor:(@manager,scenario) ->
     @map = new Map(40,30)
     @queue = [(name: "initialize")]
-    @units = new UnitsManager(this)
+    @units = new UnitsManager(this,scenario)
 
   run: () ->
     @units.run()
