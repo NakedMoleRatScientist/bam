@@ -1,4 +1,4 @@
-class TextOptions
+class TextList
   constructor: () ->
     @texts = []
   add_text: (text) ->
