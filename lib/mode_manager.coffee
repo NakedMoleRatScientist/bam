@@ -8,10 +8,12 @@ class ModeManager
     @key = eval("new " + name + "KeyMode(p5)")
 
   initialize_with_data: (name,data) ->
-    p5 = @p5
     @logic = eval("new " + name + "Mode(this,data)")
-    @graphic = eval("new " + name + "DrawMode(p5)")
+    graphic_start(name)
     @key = eval("new " + name + "KeyMode(p5)")
+
+  graphic_start: (name) ->
+    @graphic = eval("new " + name + "DrawMode(this.p5)")
 
 
   draw: () ->
