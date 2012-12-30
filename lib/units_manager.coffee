@@ -17,6 +17,12 @@ class UnitsManager
     if @units.length == 1
       @game.initialize_over()
 
+  remove_target: (target) ->
+    @units = @units.filter (x) -> x != target
+    console.log("Survivor: " + @units[0].name)
+
+#Unit actions
+
   select_target: (unit) ->
     if unit.align == 2
       find = 0
@@ -27,9 +33,7 @@ class UnitsManager
         return u
     return null
 
-  remove_target: (target) ->
-    @units = @units.filter (x) -> x != target
-    console.log("Survivor: " + @units[0].name)
+
   #Individuals taking cover are much harder to shoot at than those who have no cover
   calculate_shot: (target) ->
     if target.pinned > 0
