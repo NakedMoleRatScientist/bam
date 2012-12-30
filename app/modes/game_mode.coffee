@@ -3,6 +3,8 @@ class GameMode
     @map = new Map(40,30)
     @queue = [(name: "initialize")]
     @units = new UnitsManager(this)
+    @units.push(new Grunt(20,20,this))
+    @units.push(new Enemy(20,0,this))
 
   run: () ->
     @units.run()
@@ -25,4 +27,5 @@ class GameMode
   bullet_add: (target) ->
     location = @map.add_bullet(target)
     @queue.push((name: "bullet", x: location.x, y: location.y))
+
   process: (result) ->
