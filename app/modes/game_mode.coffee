@@ -4,6 +4,7 @@ class GameMode
     @queue = [(name: "initialize")]
     @units = new UnitsManager(this)
     @units.push(new Grunt(20,20,this))
+    @units.push(new Grunt(10,20,this))
     @units.push(new Enemy(20,0,this))
 
   run: () ->
