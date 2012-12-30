@@ -1,5 +1,5 @@
 class DefenseScenario
   constructor: (@manager) ->
-    @manager.add("Grunt",20,29)
-    @manager.add("Grunt",10,29)
-    @manager.add("Commander",5,29)
+    @manager.add_unit("Grunt",20,29)
+    @manager.add_unit("Grunt",10,29)
+    @manager.add_unit("Commander",5,29)
