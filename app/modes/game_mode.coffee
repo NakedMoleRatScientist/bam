@@ -8,7 +8,7 @@ class GameMode
     @units.run()
 
   initialize_over: () ->
-    data = (frames: @units.frame)
+    data = (frames: @units.frame, hits: @units.hits)
     @manager.initialize_with_data("GameOver", data)
 
   get_queue: () ->
