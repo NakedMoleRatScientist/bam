@@ -21,6 +21,10 @@ class UnitsManager
     @units = @units.filter (x) -> x != target
     console.log("Survivor: " + @units[0].name)
 
+  add_unit: (name,x,y) ->
+    unit = eval("new " + name + "(this,x,y)" )
+    @units.push(unit)
+
 #Unit actions
 
   select_target: (unit) ->
