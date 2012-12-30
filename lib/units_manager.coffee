@@ -5,7 +5,7 @@ class UnitsManager
     @units.push(new Enemy(20,0,this))
   #Stats
     @frame = 0
-    @hit = 0
+    @hits = 0
 
   run: () ->
     for u in @units
