@@ -45,6 +45,7 @@ class UnitsManager
       @hits += 1
       console.log("target " + target.name + " is shot!")
     else
+      @missed += 1
       @game.bullet_add(target)
     cover = Math.random() * 10
     if cover > 5
