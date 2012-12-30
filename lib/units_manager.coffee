@@ -41,6 +41,7 @@ class UnitsManager
     chance = this.calculate_shot(target)
     if strike > chance
       target.health -= Math.random() * 10
+      @hit += 1
       console.log("target " + target.name + " is shot!")
     else
       @game.bullet_add(target)
