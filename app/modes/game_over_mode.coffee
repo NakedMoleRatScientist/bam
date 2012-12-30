@@ -6,4 +6,4 @@ class GameOverMode extends Mode
     @texts.add_text("Hits: " + @data.hits)
     @texts.add_text("Missed: " + @data.missed)
     @texts.add_text("Total fired: " + (@data.hits + @data.missed))
-    @queue.push("draw")
+    @queue.push((name: "draw", texts: @texts.texts))
