@@ -3,9 +3,6 @@ class GameMode
     @map = new Map(40,30)
     @queue = [(name: "initialize")]
     @units = new UnitsManager(this)
-    @units.units.push(new Grunt(20,20,this))
-    @units.units.push(new Grunt(10,20,this))
-    @units.units.push(new Enemy(20,0,this))
 
   run: () ->
     @units.run()
