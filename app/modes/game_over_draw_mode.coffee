@@ -10,4 +10,4 @@ class GameOverDrawMode
     msg = mode.get_queue()
     switch(msg.name)
       when "draw"
-        this.draw(mode.options)
+        this.draw(msg.texts)
