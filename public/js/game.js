@@ -1,5 +1,5 @@
 (function() {
-  var Bullet, Camera, Enemy, Floor, GameDrawMode, GameKeyMode, GameMode, GameOverDrawMode, GameOverKeyMode, GameOverMode, Grunt, Map, MenuDrawMode, MenuKeyMode, MenuMode, Mode, ModeManager, TextOptions, TextOptionsDraw, Unit, UnitsManager, boxedText, bulletDraw, dirtyDraw, floorDraw, frameRateDraw, instructionDraw, mapDraw, menu, randomOpsAddsub, titleDraw, truncateDecimals, unitDraw,
+  var Bullet, Camera, Commander, DefenseScenario, Enemy, Floor, GameDrawMode, GameKeyMode, GameMode, GameOverDrawMode, GameOverKeyMode, GameOverMode, Grunt, Map, MenuDrawMode, MenuKeyMode, MenuMode, Mode, ModeManager, TextList, TextListDraw, TextOptions, TextOptionsDraw, Unit, UnitsManager, boxedText, bulletDraw, dirtyDraw, floorDraw, frameRateDraw, instructionDraw, mapDraw, menu, randomOpsAddsub, titleDraw, truncateDecimals, unitDraw,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -21,7 +21,7 @@
     Mode.prototype.run = function() {};
 
     Mode.prototype.get_queue = function() {
-      if (this.queue.size !== 0) return this.queue.pop();
+      if (this.queue.length !== 0) return this.queue.pop();
       return false;
     };
 
@@ -39,19 +39,23 @@
     }
 
     ModeManager.prototype.initialize = function(name) {
-      var p5;
-      p5 = this.p5;
       this.logic = eval("new " + name + "Mode(this)");
-      this.graphic = eval("new " + name + "DrawMode(p5)");
-      return this.key = eval("new " + name + "KeyMode(p5)");
+      this.graphic_start(name);
+      return this.key_start(name);
     };
 
     ModeManager.prototype.initialize_with_data = function(name, data) {
-      var p5;
-      p5 = this.p5;
       this.logic = eval("new " + name + "Mode(this,data)");
-      this.graphic = eval("new " + name + "DrawMode(p5)");
-      return this.key = eval("new " + name + "KeyMode(p5)");
+      this.graphic_start(name);
+      return this.key_start(name);
+    };
+
+    ModeManager.prototype.graphic_start = function(name) {
+      return this.graphic = eval("new " + name + "DrawMode(this.p5)");
+    };
+
+    ModeManager.prototype.key_start = function(name) {
+      return this.key = eval("new " + name + "KeyMode(this.p5)");
     };
 
     ModeManager.prototype.draw = function() {
@@ -134,7 +138,7 @@
 
     Unit.prototype.aim = function() {
       if (this.charge === 0) {
-        return this.charge = 5;
+        return this.charge = 20;
       } else {
         this.charge -= 1;
         if (this.charge === 0) return this.queue.push("fire");
@@ -158,7 +162,7 @@
       if (this.pinned > 0) {
         return this.pinned += 1;
       } else {
-        this.pinned += 10;
+        this.pinned += 30;
         this.manager.game.update_unit(this);
         return this.queue.push("pinned");
       }
@@ -207,12 +211,13 @@
 
   UnitsManager = (function() {
 
-    function UnitsManager(game) {
+    function UnitsManager(game, scenario) {
       this.game = game;
       this.units = [];
-      this.units.push(new Grunt(20, 20, this));
-      this.units.push(new Enemy(20, 0, this));
+      this.scenario = eval("new " + scenario + "Scenario(this)");
       this.frame = 0;
+      this.hits = 0;
+      this.missed = 0;
     }
 
     UnitsManager.prototype.run = function() {
@@ -230,6 +235,19 @@
       if (this.units.length === 1) return this.game.initialize_over();
     };
 
+    UnitsManager.prototype.remove_target = function(target) {
+      this.units = this.units.filter(function(x) {
+        return x !== target;
+      });
+      return console.log("Survivor: " + this.units[0].name);
+    };
+
+    UnitsManager.prototype.add_unit = function(name, x, y) {
+      var unit;
+      unit = eval("new " + name + "(x,y,this)");
+      return this.units.push(unit);
+    };
+
     UnitsManager.prototype.select_target = function(unit) {
       var find, u, _i, _len, _ref;
       if (unit.align === 2) {
@@ -245,13 +263,6 @@
       return null;
     };
 
-    UnitsManager.prototype.remove_target = function(target) {
-      this.units = this.units.filter(function(x) {
-        return x !== target;
-      });
-      return console.log("Survivor: " + this.units[0].name);
-    };
-
     UnitsManager.prototype.calculate_shot = function(target) {
       if (target.pinned > 0) return 8;
       return 5;
@@ -263,8 +274,10 @@
       chance = this.calculate_shot(target);
       if (strike > chance) {
         target.health -= Math.random() * 10;
+        this.hits += 1;
         console.log("target " + target.name + " is shot!");
       } else {
+        this.missed += 1;
         this.game.bullet_add(target);
       }
       cover = Math.random() * 10;
@@ -389,6 +402,33 @@
     return this.p5.text("FPS: " + Math.floor(this.p5.__frameRate), 200, 15);
   };
 
+  TextListDraw = (function() {
+
+    function TextListDraw(p5, x, y, size) {
+      this.p5 = p5;
+      this.x = x;
+      this.y = y;
+      this.size = size;
+      this.offset_y = 0;
+    }
+
+    TextListDraw.prototype.draw = function(texts) {
+      var data, y, _i, _len, _results;
+      this.p5.textFont("Monospace", this.size);
+      y = this.y;
+      _results = [];
+      for (_i = 0, _len = texts.length; _i < _len; _i++) {
+        data = texts[_i];
+        this.p5.text(data, this.x, y);
+        _results.push(y += this.size);
+      }
+      return _results;
+    };
+
+    return TextListDraw;
+
+  })();
+
   TextOptions = (function() {
 
     function TextOptions() {
@@ -431,6 +471,20 @@
     };
 
     return TextOptions;
+
+  })();
+
+  TextList = (function() {
+
+    function TextList() {
+      this.texts = [];
+    }
+
+    TextList.prototype.add_text = function(text) {
+      return this.texts.push(text);
+    };
+
+    return TextList;
 
   })();
 
@@ -509,9 +563,15 @@
       this.manager = manager;
       this.data = data;
       GameOverMode.__super__.constructor.call(this);
-      this.options = new TextOptions();
-      this.options.add_text(["Framed elapsed: " + this.data.frames]);
-      this.queue.push("draw");
+      this.texts = new TextList();
+      this.texts.add_text("Framed elapsed: " + this.data.frames);
+      this.texts.add_text("Hits: " + this.data.hits);
+      this.texts.add_text("Missed: " + this.data.missed);
+      this.texts.add_text("Total fired: " + (this.data.hits + this.data.missed));
+      this.queue.push({
+        name: "draw",
+        texts: this.texts.texts
+      });
     }
 
     return GameOverMode;
@@ -543,7 +603,7 @@
 
     GameDrawMode.prototype.draw_unit = function(msg) {
       dirtyDraw(this.p5, msg);
-      return unitDraw(msg.unit, this.p5);
+      if (msg.unit.health > 0) return unitDraw(msg.unit, this.p5);
     };
 
     GameDrawMode.prototype.draw_bullet = function(msg) {
@@ -595,7 +655,7 @@
           this.options.decrease();
           return this.queue.push("update");
         case "select":
-          return this.manager.initialize("Game");
+          return this.manager.initialize_with_data("Game", "Defense");
       }
     };
 
@@ -632,18 +692,20 @@
 
     function GameOverDrawMode(p5) {
       this.p5 = p5;
-      this.texts = new TextOptionsDraw(this.p5, 100, 100, 18);
+      this.texts = new TextListDraw(this.p5, 100, 100, 18);
     }
 
-    GameOverDrawMode.prototype.draw = function(object) {
+    GameOverDrawMode.prototype.draw = function(texts) {
       this.p5.background(0);
-      return this.texts.draw(object.options, object.pointer);
+      return this.texts.draw(texts);
     };
 
     GameOverDrawMode.prototype.process = function(mode) {
-      switch (mode.get_queue()) {
+      var msg;
+      msg = mode.get_queue();
+      switch (msg.name) {
         case "draw":
-          return this.draw(mode.options);
+          return this.draw(msg.texts);
       }
     };
 
@@ -665,7 +727,7 @@
 
   GameMode = (function() {
 
-    function GameMode(manager) {
+    function GameMode(manager, scenario) {
       this.manager = manager;
       this.map = new Map(40, 30);
       this.queue = [
@@ -673,7 +735,7 @@
           name: "initialize"
         }
       ];
-      this.units = new UnitsManager(this);
+      this.units = new UnitsManager(this, scenario);
     }
 
     GameMode.prototype.run = function() {
@@ -683,7 +745,9 @@
     GameMode.prototype.initialize_over = function() {
       var data;
       data = {
-        frames: this.units.frame
+        frames: this.units.frame,
+        hits: this.units.hits,
+        missed: this.units.missed
       };
       return this.manager.initialize_with_data("GameOver", data);
     };
@@ -749,6 +813,20 @@
     return Floor;
 
   })();
+
+  Commander = (function(_super) {
+
+    __extends(Commander, _super);
+
+    function Commander(x, y, manager) {
+      this.manager = manager;
+      this.name = "C";
+      Commander.__super__.constructor.call(this, x, y);
+    }
+
+    return Commander;
+
+  })(Unit);
 
   Enemy = (function(_super) {
 
@@ -828,5 +906,26 @@
     p5.fill(255, 255, 0);
     return p5.rect(x, y, 2, 2);
   };
+
+  DefenseScenario = (function() {
+
+    function DefenseScenario(manager) {
+      this.manager = manager;
+      this.manager.add_unit("Grunt", 20, 29);
+      this.manager.add_unit("Grunt", 10, 29);
+      this.manager.add_unit("Commander", 5, 29);
+      this.waves = 0;
+      this.generate_enemy();
+    }
+
+    DefenseScenario.prototype.generate_enemy = function() {
+      var spawn;
+      spawn = Math.random() * 30;
+      return this.manager.add_unit("Enemy", spawn, 0);
+    };
+
+    return DefenseScenario;
+
+  })();
 
 }).call(this);
