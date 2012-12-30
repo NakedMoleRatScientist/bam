@@ -1,11 +1,7 @@
 class UnitsManager
   constructor:(@game,scenario) ->
     @units = []
-    if scenario == "defense"
-      @units.push(new Grunt(20,20,this))
-      @units.push(new Grunt(10,20,this))
-      @units.push(new Commander(5,20,this))
-      @units.push(new Enemy(20,0,this))
+    @scenario = eval("new " + scenario + "Defense(this)")
   #Stats
     @frame = 0
     @hits = 0
