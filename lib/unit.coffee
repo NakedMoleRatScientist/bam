@@ -33,7 +33,7 @@ class Unit
 
   aim: () ->
     if @charge == 0
-      @charge = 5
+      @charge = 20
     else
       @charge -= 1
       if @charge == 0
@@ -53,6 +53,6 @@ class Unit
     if @pinned > 0
       @pinned += 1
     else
-      @pinned += 10
+      @pinned += 30
       @manager.game.update_unit(this)
       @queue.push("pinned")
