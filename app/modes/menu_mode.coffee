@@ -18,4 +18,4 @@ class MenuMode
         @options.decrease()
         @queue.push "update"
       when "select"
-        @manager.initialize("Game")
+        @manager.initialize_with_data("Game","defense")
