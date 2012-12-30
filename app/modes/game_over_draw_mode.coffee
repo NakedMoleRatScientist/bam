@@ -7,6 +7,7 @@ class GameOverDrawMode
     @texts.draw(texts)
 
   process: (mode) ->
-    switch(mode.get_queue())
+    msg = mode.get_queue()
+    switch(msg.name)
       when "draw"
         this.draw(mode.options)
