@@ -6,7 +6,7 @@ class UnitsManager
   #Stats
     @frame = 0
     @hits = 0
-    @shots = 0
+    @missed = 0
 
   run: () ->
     for u in @units
