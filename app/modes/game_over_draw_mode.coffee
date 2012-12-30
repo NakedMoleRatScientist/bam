@@ -1,6 +1,6 @@
 class GameOverDrawMode
   constructor: (@p5) ->
-    @texts = new TextOptionsDraw(@p5,100,100,18)
+    @texts = new TextListDraw(@p5,100,100,18)
 
   draw: (texts) ->
     @p5.background(0)
