@@ -6,5 +6,5 @@ class DefenseScenario
     @waves = 0
     this.generate_enemy()
   generate_enemy: () ->
-    spawn = Math.random() * 30
+    spawn = truncateDecimals(Math.random() * 30)
     @manager.add_unit("Enemy",spawn,0)
