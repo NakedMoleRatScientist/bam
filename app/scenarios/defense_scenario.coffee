@@ -7,5 +7,4 @@ class DefenseScenario
     this.generate_enemy()
   generate_enemy: () ->
     spawn = truncateDecimals(Math.random() * 30)
-    console.log(spawn)
     @manager.add_unit("Enemy",spawn,0)
