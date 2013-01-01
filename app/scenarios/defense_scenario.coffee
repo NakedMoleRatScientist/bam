@@ -8,4 +8,6 @@ class DefenseScenario
   generate_enemy: () ->
     spawn = truncateDecimals(Math.random() * 30)
     @manager.add_unit("Enemy",spawn,0)
-  advance_wave: () ->
+  advance_wave: (frame) ->
+    if frame % 1000 == 0
+      @waves += 1
