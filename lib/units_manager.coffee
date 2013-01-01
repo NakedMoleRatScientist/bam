@@ -17,6 +17,8 @@ class UnitsManager
   add_unit: (name,x,y) ->
     unit = eval("new " + name + "(x,y,this)" )
     @units.push(unit)
+    if unit.align == 0
+      @friendly += 1
     @game.update_unit(unit)
 
 #Unit actions
