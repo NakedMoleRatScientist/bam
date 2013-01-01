@@ -8,7 +8,7 @@ class Unit
     @health = 100
     @pinned = 0
     @charge = 0
-    @target_action = TargetSimpleSelect
+    @target_action = TargetSelectSimple
 
   empty_queue: () ->
     if @queue.length == 0
@@ -42,7 +42,7 @@ class Unit
         @queue.push("fire")
 
   find: () ->
-    @target = @manager.select_target(this)
+    @target = @target_action.call(undefined, this, @manager.units)
     if @target != null
       @queue.pop()
       @queue.push("aim")
