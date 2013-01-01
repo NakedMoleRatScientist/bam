@@ -7,7 +7,7 @@ class GameMode
     @frame = 0
   run: () ->
     @units.run()
-    @scenario.run(@units.frame)
+    @scenario.run(@frame)
     @frame += 1
 
   initialize_over: () ->
