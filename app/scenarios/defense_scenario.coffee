@@ -18,5 +18,6 @@ class DefenseScenario
 
   run: (frame) ->
     if frame % 1000 == 0
-      console.log("wave: " + @waves)
       this.advance_wave()
+    if @units.friendly == 0
+      @game.initialize_over()
