@@ -1,5 +1,5 @@
 class DefenseScenario
-  constructor: (@units) ->
+  constructor: (@units,@game) ->
     @units.add_unit("Grunt",20,29)
     @units.add_unit("Grunt",10,29)
     @units.add_unit("Commander",5,29)
