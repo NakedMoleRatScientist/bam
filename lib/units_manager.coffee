@@ -17,6 +17,7 @@ class UnitsManager
   add_unit: (name,x,y) ->
     unit = eval("new " + name + "(x,y,this)" )
     @units.push(unit)
+    @game.update_unit(unit)
 
 #Unit actions
 
