@@ -1,7 +1,7 @@
 class UnitsManager
   constructor:(@game,scenario) ->
     @units = []
-
+    @friendly = 0
   #Stats
     @hits = 0
     @missed = 0
