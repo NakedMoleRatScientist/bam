@@ -3,14 +3,12 @@ class UnitsManager
     @units = []
 
   #Stats
-    @frame = 0
     @hits = 0
     @missed = 0
 
   run: () ->
     for u in @units
       u.act()
-    @frame += 1
 
   remove_target: (target) ->
     @units = @units.filter (x) -> x != target
