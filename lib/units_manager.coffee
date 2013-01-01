@@ -57,6 +57,8 @@ class UnitsManager
     if target.health > 0
       return "aim"
     else
+      if target.align == 0
+        @friendly -= 1
       @game.dirty_redraw(target)
       console.log(target.name + " is killed!")
       this.remove_target(target)
