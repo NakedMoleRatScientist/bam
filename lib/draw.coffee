@@ -11,7 +11,6 @@ menu = (p5) ->
     @mode.pressed()
 
   p5.draw = () ->
-    frameRateDraw(p5)
     @mode.run()
     @mode.draw()
 
