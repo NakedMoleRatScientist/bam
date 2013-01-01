@@ -23,10 +23,6 @@ class UnitsManager
 
 #Unit actions
 
-  select_target: (unit) ->
-     TargetSelectSimple(unit,@units)
-
-
   #Individuals taking cover are much harder to shoot at than those who have no cover
   calculate_shot: (target) ->
     if target.pinned > 0
