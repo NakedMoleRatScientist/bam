@@ -3,6 +3,7 @@ class DefenseScenario
     @manager.add_unit("Grunt",20,29)
     @manager.add_unit("Grunt",10,29)
     @manager.add_unit("Commander",5,29)
+    @manager.add_unit("Grunt",30,29)
     @waves = 0
     this.generate_enemy()
   generate_enemy: () ->
