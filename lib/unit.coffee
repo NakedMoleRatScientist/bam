@@ -8,6 +8,8 @@ class Unit
     @health = 100
     @pinned = 0
     @charge = 0
+    @target_action = TargetSimpleSelect
+
   empty_queue: () ->
     if @queue.length == 0
       @queue.push("find")
