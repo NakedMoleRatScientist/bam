@@ -6,4 +6,4 @@ TargetSelectSimple = (unit,list) ->
   for u in list
     if u.align == find
       return u
-    return null
+  return null
