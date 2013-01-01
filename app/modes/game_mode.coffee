@@ -6,6 +6,7 @@ class GameMode
     @scenario = eval("new " + scenario + "Scenario(this.units)")
   run: () ->
     @units.run()
+    @scenario.run(@units.frame)
 
   initialize_over: () ->
     data = (frames: @units.frame, hits: @units.hits, missed: @units.missed)
