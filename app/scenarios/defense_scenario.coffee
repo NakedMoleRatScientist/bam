@@ -12,9 +12,7 @@ class DefenseScenario
   advance_wave: () ->
     @waves += 1
     enemies = truncateDecimals(Math.random() * 4) + 1
-    console.log(enemies)
-    for x in enemies
-      console.log("beep")
+    for i in [1..enemies]
       this.generate_enemy()
 
   run: (frame) ->
