@@ -1,7 +1,7 @@
 class UnitsManager
   constructor:(@game,scenario) ->
     @units = []
-    @scenario = eval("new " + scenario + "Scenario(this)")
+
   #Stats
     @frame = 0
     @hits = 0
