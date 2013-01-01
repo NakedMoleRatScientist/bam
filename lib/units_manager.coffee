@@ -24,14 +24,7 @@ class UnitsManager
 #Unit actions
 
   select_target: (unit) ->
-    if unit.align == 2
-      find = 0
-    else
-      find = 2
-    for u in @units
-      if u.align == find
-        return u
-    return null
+     TargetSelectSimple(unit,@units)
 
 
   #Individuals taking cover are much harder to shoot at than those who have no cover
