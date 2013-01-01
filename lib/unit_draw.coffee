@@ -1,4 +1,5 @@
 unitDraw = (unit,p5) ->
+  p5.noStroke()
   if unit.pinned > 0
     p5.fill(211,211,211)
   else
