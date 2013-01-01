@@ -3,7 +3,7 @@ class GameMode
     @map = new Map(40,30)
     @queue = [(name: "initialize")]
     @units = new UnitsManager(this,scenario)
-
+    @scenario = eval("new " + scenario + "Scenario(this.units)")
   run: () ->
     @units.run()
 
