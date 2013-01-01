@@ -11,3 +11,6 @@ class DefenseScenario
   advance_wave: (frame) ->
     if frame % 1000 == 0
       @waves += 1
+      enemies = truncateDecimals(Math.random() * 4)
+      for x in enemies
+        this.generate_enemy()
