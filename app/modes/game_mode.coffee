@@ -4,9 +4,11 @@ class GameMode
     @queue = [(name: "initialize")]
     @units = new UnitsManager(this,scenario)
     @scenario = eval("new " + scenario + "Scenario(this.units)")
+    @frame = 0
   run: () ->
     @units.run()
     @scenario.run(@units.frame)
+    @frame += 1
 
   initialize_over: () ->
     data = (frames: @units.frame, hits: @units.hits, missed: @units.missed)
