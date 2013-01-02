@@ -34,6 +34,11 @@ class Unit
         this.fire()
 
   aim: () ->
+    if target.health < 0
+      @charge = 0
+      @queue.pop()
+      @queue.push("find")
+      return
     if @charge == 0
       @charge = 20
     else
