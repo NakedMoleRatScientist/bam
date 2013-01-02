@@ -1,15 +1,16 @@
 (function() {
-  var Bullet, Camera, Commander, DefenseScenario, Enemy, Floor, GameDrawMode, GameKeyMode, GameMode, GameOverDrawMode, GameOverKeyMode, GameOverMode, Grunt, Map, MenuDrawMode, MenuKeyMode, MenuMode, Mode, ModeManager, TextList, TextListDraw, TextOptions, TextOptionsDraw, Unit, UnitsManager, boxedText, bulletDraw, dirtyDraw, floorDraw, frameRateDraw, instructionDraw, mapDraw, menu, randomOpsAddsub, titleDraw, truncateDecimals, unitDraw,
+  var Bullet, Camera, Commander, DefenseScenario, Enemy, Floor, GameDrawMode, GameKeyMode, GameMode, GameOverDrawMode, GameOverKeyMode, GameOverMode, Grunt, Map, MenuDrawMode, MenuKeyMode, MenuMode, Mode, ModeManager, TargetRandomSelect, TargetSelectSimple, TestSelectionDrawMode, TestSelectionMode, TextList, TextListDraw, TextOptions, TextOptionsDraw, Unit, UnitsManager, boxedText, bulletDraw, dirtyDraw, floorDraw, frameRateDraw, instructionDraw, mapDraw, menu, randomOpsAddsub, titleDraw, truncateDecimals, unitDraw,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   unitDraw = function(unit, p5) {
+    p5.noStroke();
     if (unit.pinned > 0) {
       p5.fill(211, 211, 211);
     } else {
       p5.fill(255);
     }
-    return p5.text(unit.name, unit.x * 20, unit.y * 20 + 15);
+    return p5.text(unit.name, unit.x * 20 + 7, unit.y * 20 + 15);
   };
 
   Mode = (function() {
@@ -107,6 +108,7 @@
       this.health = 100;
       this.pinned = 0;
       this.charge = 0;
+      this.target_action = TargetSelectSimple;
     }
 
     Unit.prototype.empty_queue = function() {
@@ -137,6 +139,12 @@
     };
 
     Unit.prototype.aim = function() {
+      if (this.target.health < 0) {
+        this.charge = 0;
+        this.queue.pop();
+        this.queue.push("find");
+        return;
+      }
       if (this.charge === 0) {
         return this.charge = 20;
       } else {
@@ -146,7 +154,7 @@
     };
 
     Unit.prototype.find = function() {
-      this.target = this.manager.select_target(this);
+      this.target = this.target_action.call(void 0, this, this.manager.units);
       if (this.target !== null) {
         this.queue.pop();
         return this.queue.push("aim");
@@ -214,25 +222,20 @@
     function UnitsManager(game, scenario) {
       this.game = game;
       this.units = [];
-      this.scenario = eval("new " + scenario + "Scenario(this)");
-      this.frame = 0;
+      this.friendly = 0;
       this.hits = 0;
       this.missed = 0;
     }
 
     UnitsManager.prototype.run = function() {
-      var u, _i, _len, _ref;
+      var u, _i, _len, _ref, _results;
       _ref = this.units;
+      _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         u = _ref[_i];
-        u.act();
+        _results.push(u.act());
       }
-      this.frame += 1;
-      return this.game_over();
-    };
-
-    UnitsManager.prototype.game_over = function() {
-      if (this.units.length === 1) return this.game.initialize_over();
+      return _results;
     };
 
     UnitsManager.prototype.remove_target = function(target) {
@@ -245,22 +248,9 @@
     UnitsManager.prototype.add_unit = function(name, x, y) {
       var unit;
       unit = eval("new " + name + "(x,y,this)");
-      return this.units.push(unit);
-    };
-
-    UnitsManager.prototype.select_target = function(unit) {
-      var find, u, _i, _len, _ref;
-      if (unit.align === 2) {
-        find = 0;
-      } else {
-        find = 2;
-      }
-      _ref = this.units;
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        u = _ref[_i];
-        if (u.align === find) return u;
-      }
-      return null;
+      this.units.push(unit);
+      if (unit.align === 0) this.friendly += 1;
+      return this.game.update_unit(unit);
     };
 
     UnitsManager.prototype.calculate_shot = function(target) {
@@ -270,6 +260,7 @@
 
     UnitsManager.prototype.exchange_fire = function(target) {
       var chance, cover, strike;
+      if (target.health < 0) return "find";
       strike = Math.random() * 10;
       chance = this.calculate_shot(target);
       if (strike > chance) {
@@ -288,6 +279,7 @@
       if (target.health > 0) {
         return "aim";
       } else {
+        if (target.align === 0) this.friendly -= 1;
         this.game.dirty_redraw(target);
         console.log(target.name + " is killed!");
         this.remove_target(target);
@@ -516,7 +508,6 @@
       return this.mode.pressed();
     };
     return p5.draw = function() {
-      frameRateDraw(p5);
       this.mode.run();
       return this.mode.draw();
     };
@@ -575,6 +566,19 @@
     }
 
     return GameOverMode;
+
+  })(Mode);
+
+  TestSelectionMode = (function(_super) {
+
+    __extends(TestSelectionMode, _super);
+
+    function TestSelectionMode(manager) {
+      this.manager = manager;
+      TestSelectionMode.__super__.constructor.call(this);
+    }
+
+    return TestSelectionMode;
 
   })(Mode);
 
@@ -736,16 +740,20 @@
         }
       ];
       this.units = new UnitsManager(this, scenario);
+      this.scenario = eval("new " + scenario + "Scenario(this.units,this)");
+      this.frame = 0;
     }
 
     GameMode.prototype.run = function() {
-      return this.units.run();
+      this.units.run();
+      this.scenario.run(this.frame);
+      return this.frame += 1;
     };
 
     GameMode.prototype.initialize_over = function() {
       var data;
       data = {
-        frames: this.units.frame,
+        frames: this.frame,
         hits: this.units.hits,
         missed: this.units.missed
       };
@@ -792,6 +800,21 @@
 
   })();
 
+  TestSelectionDrawMode = (function() {
+
+    function TestSelectionDrawMode(p5) {
+      this.p5 = p5;
+    }
+
+    TestSelectionDrawMode.prototype.process = function(mode) {
+      var msg;
+      return msg = mode.get_queue();
+    };
+
+    return TestSelectionDrawMode;
+
+  })();
+
   GameKeyMode = (function() {
 
     function GameKeyMode(p5) {
@@ -803,6 +826,37 @@
     return GameKeyMode;
 
   })();
+
+  TargetRandomSelect = function(unit, list) {
+    var find;
+    if (unit.align === 2) {
+      find = 0;
+    } else {
+      find = 2;
+    }
+    list = list.filter(function(x) {
+      return x.align === find;
+    });
+    if (list.length === 0) {
+      return null;
+    } else {
+      return list[Math.floor(Math.random() * list.length)];
+    }
+  };
+
+  TargetSelectSimple = function(unit, list) {
+    var find, u, _i, _len;
+    if (unit.align === 2) {
+      find = 0;
+    } else {
+      find = 2;
+    }
+    for (_i = 0, _len = list.length; _i < _len; _i++) {
+      u = list[_i];
+      if (u.align === find) return u;
+    }
+    return null;
+  };
 
   Floor = (function() {
 
@@ -822,6 +876,7 @@
       this.manager = manager;
       this.name = "C";
       Commander.__super__.constructor.call(this, x, y);
+      this.target_action = TargetRandomSelect;
     }
 
     return Commander;
@@ -875,6 +930,7 @@
       this.manager = manager;
       this.name = "G";
       Grunt.__super__.constructor.call(this, x, y);
+      this.target_action = TargetRandomSelect;
     }
 
     return Grunt;
@@ -909,19 +965,36 @@
 
   DefenseScenario = (function() {
 
-    function DefenseScenario(manager) {
-      this.manager = manager;
-      this.manager.add_unit("Grunt", 20, 29);
-      this.manager.add_unit("Grunt", 10, 29);
-      this.manager.add_unit("Commander", 5, 29);
+    function DefenseScenario(units, game) {
+      this.units = units;
+      this.game = game;
+      this.units.add_unit("Grunt", 20, 29);
+      this.units.add_unit("Grunt", 10, 29);
+      this.units.add_unit("Commander", 5, 29);
+      this.units.add_unit("Grunt", 30, 29);
       this.waves = 0;
-      this.generate_enemy();
     }
 
     DefenseScenario.prototype.generate_enemy = function() {
       var spawn;
-      spawn = Math.random() * 30;
-      return this.manager.add_unit("Enemy", spawn, 0);
+      spawn = truncateDecimals(Math.random() * 30);
+      return this.units.add_unit("Enemy", spawn, 0);
+    };
+
+    DefenseScenario.prototype.advance_wave = function() {
+      var enemies, i, _results;
+      this.waves += 1;
+      enemies = truncateDecimals(Math.random() * 3) + 1;
+      _results = [];
+      for (i = 1; 1 <= enemies ? i <= enemies : i >= enemies; 1 <= enemies ? i++ : i--) {
+        _results.push(this.generate_enemy());
+      }
+      return _results;
+    };
+
+    DefenseScenario.prototype.run = function(frame) {
+      if (frame % 1000 === 0) this.advance_wave();
+      if (this.units.friendly === 0) return this.game.initialize_over();
     };
 
     return DefenseScenario;
