@@ -30,6 +30,8 @@ class UnitsManager
     5
 
   exchange_fire: (target) ->
+    if target.health < 0
+      return "find"
     strike = Math.random() * 10
     chance = this.calculate_shot(target)
     if strike > chance
