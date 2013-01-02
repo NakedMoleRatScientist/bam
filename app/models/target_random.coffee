@@ -1,4 +1,4 @@
-TargetRandomFire = (unit,list) ->
+TargetRandomSelect = (unit,list) ->
   if unit.align == 2
     find = 0
   else
