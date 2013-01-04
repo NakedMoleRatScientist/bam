@@ -1,12 +1,14 @@
 %html
   %head
     %title BAM! - A Real Time Tactics simulator
-    %link{:href => "public/css/bootstrap.min.css", :rel => "stylesheet", :type => "text/css"}
+    %link{:href => "css/bootstrap.min.css", :rel => "stylesheet", :type => "text/css"}
+    %script{:src => "js/bootstrap.min.js"}
   %body
-    %center
-      %h2 BAM!
-      %p An ASCII real time tactic simulator 
-    %h3 Game (Pre-alpha)
-    %p
-      %a{:title => "Game", :href => "game"} Play Now
-      , but note that the game is still under development.
+    .container
+      %center
+        %h2 BAM!
+        %p An ASCII real time tactic simulator 
+      %h3 Game (Pre-alpha)
+      %p
+        %a{:title => "Game", :href => "game"} Play Now
+        , but note that the game is still under development.
