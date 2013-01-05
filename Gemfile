@@ -1,7 +1,10 @@
 source "http://rubygems.org"
-gem "shotgun"
 gem "sinatra"
 gem "haml"
-gem "thin"
 gem "capistrano"
 gem "railsless-deploy"
+
+group :development do
+  gem "thin"
+  gem "shotgun"
+end
