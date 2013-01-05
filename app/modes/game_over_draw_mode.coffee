@@ -4,6 +4,7 @@ class GameOverDrawMode
 
   draw: (texts) ->
     @p5.background(0)
+    @p5.fill(0)
     @texts.draw(texts)
 
   process: (mode) ->
