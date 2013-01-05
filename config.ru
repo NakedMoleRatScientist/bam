@@ -12,7 +12,7 @@ get '/' do
 end
 
 get '/game' do
-  open(File.dirname(__FILE__) + '/public/index.html').read
+  open(File.dirname(__FILE__) + '/public/game.html').read
 end
 
 
