@@ -1,6 +1,7 @@
 require "rvm/capistrano"
 require "bundler/capistrano"
 
+set :rvm_ruby_string, 'ruby-1.9.3-p194@bam'
 set :application, "Bam"
 set :repository, "file:///home/kiba/repos/bam"
 set :local_repository, "git+ssh://bitcoinweekly.com/home/kiba/repos/bam"
