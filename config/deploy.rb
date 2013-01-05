@@ -1,4 +1,5 @@
 set :rvm_ruby_string, 'ruby-1.9.3-p194@bam'
+require "rvm/capistrano"
 set :application, "Bam"
 set :repository, "file:///home/kiba/repos/bam"
 set :local_repository, "git+ssh://bitcoinweekly.com/home/kiba/repos/bam"
