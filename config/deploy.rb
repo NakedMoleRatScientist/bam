@@ -10,9 +10,3 @@ set :branch, "master"
 
 server "bam-rtt.com", :app, :primary => true
 
-before "deploy:cold", 
-    "deploy:install_bundler"
-
-task :install_bundler, :roles => :app do
-    run "type -P bundle &>/dev/null || { gem install bundler --no-rdoc --no-ri; }"
-end
