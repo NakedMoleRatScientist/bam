@@ -1,4 +1,6 @@
-set :application, "the-city"
+require "bundler/capistrano"
+
+set :application, "Bam"
 set :repository, "file:///home/kiba/repos/bam"
 set :local_repository, "git+ssh://bitcoinweekly.com/home/kiba/repos/bam"
 set :deploy_to, "/home/kiba/projects/bam"
